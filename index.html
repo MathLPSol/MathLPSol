@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>LP Solver — Tối Ưu Tuyến Tính</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#1a1a2e;--ink2:#3d3d5c;--ink3:#7b7b9a;
+  --paper:#fafaf8;--paper2:#f2f1ed;--paper3:#e8e6df;--line:#dddbd2;
+  --teal:#0d7377;--teal-lt:#e4f4f4;--teal-mid:#9dd4d5;
+  --orange:#c84b15;--orange-lt:#fdf0e8;
+  --purple:#5040a0;--purple-lt:#eeeaff;
+  --green:#1e6e40;--green-lt:#e5f5ec;
+  --red:#c0392b;--red-lt:#fdecea;
+  --gold:#7a5a00;--gold-lt:#fef8e6;
+  --sans:'Plus Jakarta Sans',sans-serif;
+  --serif:'Instrument Serif',serif;
+  --mono:'JetBrains Mono',monospace;
+  --r-sm:6px;--r-md:10px;--r-lg:16px;
+  --sh-sm:0 1px 3px rgba(26,26,46,.08),0 1px 2px rgba(26,26,46,.05);
+  --sh-md:0 4px 14px rgba(26,26,46,.10),0 2px 4px rgba(26,26,46,.06);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.6;min-height:100vh;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+
+/* LAYOUT */
+.layout{display:grid;grid-template-columns:370px 1fr;min-height:100vh}
+.sidebar{background:white;border-right:1px solid var(--line);position:sticky;top:0;height:100vh;overflow-y:auto;display:flex;flex-direction:column}
+.sb-inner{padding:26px 22px 44px;flex:1}
+.main{background:var(--paper);padding:30px 34px 80px;min-width:0}
+
+/* LOGO */
+.logo-eyebrow{font-family:var(--mono);font-size:9.5px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:var(--teal);margin-bottom:7px;display:flex;align-items:center;gap:8px}
+.logo-eyebrow::before{content:'';width:16px;height:2px;background:var(--teal);display:inline-block}
+.logo-title{font-family:var(--serif);font-style:italic;font-size:27px;color:var(--ink);line-height:1.15;letter-spacing:-.3px}
+.logo-sub{font-size:12px;color:var(--ink3);margin-top:5px;line-height:1.5}
+.logo-area{margin-bottom:26px;padding-bottom:20px;border-bottom:1px solid var(--line)}
+.slbl{font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--ink3);margin-bottom:9px;margin-top:20px;display:flex;align-items:center;gap:8px}
+.slbl:first-of-type{margin-top:0}
+.slbl span{flex:1;height:1px;background:var(--line)}
+
+/* FORM */
+.frow{display:flex;gap:10px;margin-bottom:10px}
+.field{flex:1}
+.field label{display:block;font-size:10.5px;font-weight:700;text-transform:uppercase;color:var(--ink2);margin-bottom:5px;letter-spacing:.4px}
+.field input[type=number],.field select,.sel-full{width:100%;background:var(--paper);border:1.5px solid var(--line);border-radius:var(--r-sm);color:var(--ink);font-family:var(--mono);font-size:14px;padding:8px 10px;outline:none;transition:border-color .18s,box-shadow .18s;appearance:none}
+.field input:focus,.field select:focus,.sel-full:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(13,115,119,.12)}
+.obj-strip{background:var(--teal-lt);border:1.5px solid var(--teal-mid);border-radius:var(--r-md);padding:11px 13px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:4px}
+.z-lbl{font-family:var(--serif);font-style:italic;font-size:19px;color:var(--teal);white-space:nowrap;margin-right:3px;letter-spacing:-.2px}
+.obj-strip input{width:60px;flex:0 0 60px;background:white;border:1.5px solid var(--teal-mid);border-radius:var(--r-sm);color:var(--ink);font-family:var(--mono);font-size:14px;font-weight:500;padding:5px 7px;text-align:center;outline:none;transition:border-color .18s}
+.obj-strip input:focus{border-color:var(--teal)}
+.math-lbl{font-family:var(--serif);font-style:italic;font-size:16px;color:var(--ink2);white-space:nowrap}
+.math-op{font-size:15px;color:var(--ink3);font-weight:300}
+.con-block{display:flex;flex-direction:column;gap:7px;margin-bottom:7px}
+.con-row{background:var(--paper);border:1.5px solid var(--line);border-radius:var(--r-md);padding:8px 11px;display:flex;align-items:center;gap:5px;flex-wrap:wrap;transition:border-color .18s}
+.con-row:hover{border-color:var(--teal)}
+.con-idx{font-family:var(--mono);font-size:9.5px;font-weight:700;color:white;background:var(--ink3);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.con-row input{width:54px;flex:0 0 54px;background:white;border:1.5px solid var(--line);border-radius:var(--r-sm);color:var(--ink);font-family:var(--mono);font-size:13px;font-weight:500;padding:5px;text-align:center;outline:none;transition:border-color .18s}
+.con-row input:focus{border-color:var(--teal)}
+.con-row select{width:56px;flex:0 0 56px;background:var(--paper2);border:1.5px solid var(--line);border-radius:var(--r-sm);color:var(--ink);font-family:var(--mono);font-size:14px;padding:5px;text-align:center;outline:none;cursor:pointer}
+.con-row select:focus{border-color:var(--teal)}
+.con-rhs{width:66px!important;flex:0 0 66px!important}
+.nn-note{font-family:var(--mono);font-size:11px;color:var(--ink3);padding:3px 0}
+.toggle-list{display:flex;flex-direction:column;gap:7px;margin-bottom:4px}
+.tgl{display:flex;align-items:center;gap:10px;cursor:pointer;padding:8px 12px;border-radius:var(--r-sm);background:var(--paper);border:1.5px solid var(--line);transition:all .18s;user-select:none}
+.tgl:hover{border-color:var(--teal);background:var(--teal-lt)}
+.tgl input[type=checkbox]{width:16px;height:16px;accent-color:var(--teal);flex-shrink:0}
+.tgl-main{font-size:13px;font-weight:600;color:var(--ink2);letter-spacing:-.1px}
+.tgl-sub{font-size:11px;color:var(--ink3);margin-top:1px}
+.action-area{margin-top:18px;display:flex;flex-direction:column;gap:8px}
+.btn-solve{background:var(--teal);color:white;border:none;border-radius:var(--r-md);padding:13px 20px;font-family:var(--sans);font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:9px;transition:background .18s,transform .15s,box-shadow .18s;box-shadow:var(--sh-sm)}
+.btn-solve:hover{background:#0a5a5d;transform:translateY(-1px);box-shadow:var(--sh-md)}
+.btn-solve:active{transform:translateY(0)}
+.btn-row{display:flex;gap:7px}
+.btn-ex{flex:1;background:var(--paper2);border:1.5px solid var(--line);border-radius:var(--r-sm);color:var(--ink2);font-family:var(--sans);font-size:11.5px;font-weight:600;cursor:pointer;padding:8px 4px;text-align:center;transition:all .18s}
+.btn-ex:hover{background:var(--teal-lt);border-color:var(--teal);color:var(--teal)}
+.btn-clr{background:transparent;border:1.5px solid var(--line);border-radius:var(--r-sm);color:var(--ink3);font-family:var(--sans);font-size:11.5px;font-weight:500;cursor:pointer;padding:8px 14px;transition:all .18s}
+.btn-clr:hover{border-color:var(--red);color:var(--red);background:var(--red-lt)}
+
+/* STATUS BAR */
+.statusbar{position:fixed;bottom:0;left:370px;right:0;background:rgba(250,250,248,.96);backdrop-filter:blur(8px);border-top:1px solid var(--line);padding:8px 20px;display:flex;align-items:center;gap:10px;z-index:100;font-family:var(--mono);font-size:11px;color:var(--ink3)}
+.sdot{width:7px;height:7px;border-radius:50%;background:var(--ink3);flex-shrink:0;transition:background .3s}
+.sdot.ok{background:var(--green)}.sdot.run{background:var(--orange);animation:blink .7s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+@media(max-width:900px){.layout{grid-template-columns:1fr}.sidebar{position:static;height:auto}.main{padding:20px 16px 60px}.statusbar{left:0}}
+
+/* PLACEHOLDER */
+.placeholder-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;text-align:center;gap:14px;color:var(--ink3)}
+.placeholder-icon{width:72px;height:72px;border-radius:50%;background:var(--paper2);border:2px dashed var(--line);display:flex;align-items:center;justify-content:center;font-size:28px}
+.placeholder-title{font-family:var(--serif);font-style:italic;font-size:22px;color:var(--ink2)}
+.placeholder-desc{font-size:13px;max-width:320px;line-height:1.7}
+
+/* PROBLEM CARD */
+.prob-card{background:white;border:1.5px solid var(--line);border-radius:var(--r-lg);padding:18px 22px;margin-bottom:22px;box-shadow:var(--sh-sm)}
+.prob-eyebrow{font-family:var(--mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--ink3);margin-bottom:10px}
+.prob-obj{display:flex;align-items:baseline;gap:10px;margin-bottom:12px;padding-bottom:12px;border-bottom:1.5px solid var(--line)}
+.prob-obj-lbl{font-family:var(--serif);font-style:italic;font-size:16px;color:var(--teal);font-weight:700}
+.prob-obj-expr{font-family:var(--mono);font-size:15px;font-weight:600}
+.prob-con-lbl{font-family:var(--sans);font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.prob-con-row{display:flex;align-items:baseline;gap:8px;padding:4px 0;border-bottom:1px dashed var(--line);font-size:13px}
+.prob-con-row:last-child{border-bottom:none}
+.prob-con-idx{font-family:var(--mono);font-size:10px;color:var(--ink3);width:18px;flex-shrink:0}
+.prob-con-expr{font-family:var(--mono);font-size:13px;flex:1}
+.prob-con-sign{color:var(--orange);font-weight:700;font-size:15px}
+.prob-con-rhs{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--teal)}
+.prob-nn{font-family:var(--mono);font-size:11px;color:var(--ink3);margin-top:7px}
+.prob-sf{margin-top:10px;padding-top:10px;border-top:1px dashed var(--line);font-family:var(--mono);font-size:11px;color:var(--ink3)}
+
+/* STEP CARDS */
+.step-card{position:relative;margin-bottom:20px;animation:rise .28s ease both}
+.step-card:nth-child(1){animation-delay:.02s}.step-card:nth-child(2){animation-delay:.05s}
+.step-card:nth-child(3){animation-delay:.08s}.step-card:nth-child(n+4){animation-delay:.10s}
+@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.step-card::before{content:'';position:absolute;left:20px;top:48px;bottom:-20px;width:2px;background:var(--line);z-index:0}
+.step-card:last-child::before{display:none}
+.step-inner{background:white;border:1.5px solid var(--line);border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--sh-sm);position:relative;z-index:1;transition:box-shadow .2s}
+.step-inner:hover{box-shadow:var(--sh-md)}
+.step-head{padding:12px 18px;display:flex;align-items:center;gap:12px;border-bottom:1.5px solid var(--line)}
+.t-init .step-head{background:var(--paper2)}
+.t-primal .step-head{background:linear-gradient(135deg,#f0eeff,#e6e0ff)}
+.t-dual .step-head{background:linear-gradient(135deg,var(--orange-lt),#fde4d4)}
+.t-optimal .step-head{background:linear-gradient(135deg,var(--green-lt),#c8e8d5)}
+.t-after .step-head{background:linear-gradient(135deg,#eaf0ff,#d8e6ff)}
+.t-gomory .step-head{background:linear-gradient(135deg,#f4e8ff,#ead4ff)}
+.step-badge{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:12px;font-weight:700;flex-shrink:0}
+.t-init .step-badge{background:var(--ink2);color:white}
+.t-primal .step-badge{background:var(--purple);color:white}
+.t-dual .step-badge{background:var(--orange);color:white}
+.t-optimal .step-badge{background:var(--green);color:white}
+.t-after .step-badge{background:#2255cc;color:white}
+.t-gomory .step-badge{background:#7c3aed;color:white}
+.step-titles{flex:1;min-width:0}
+.step-title{font-size:13.5px;font-weight:700;color:var(--ink);line-height:1.3;letter-spacing:-.1px}
+.step-sub{font-size:11.5px;font-weight:400;color:var(--ink3);margin-top:2px}
+.step-pill{font-family:var(--mono);font-size:8.5px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;padding:3px 9px;border-radius:20px;flex-shrink:0}
+.t-init .step-pill{background:var(--paper3);color:var(--ink2)}
+.t-primal .step-pill{background:var(--purple-lt);color:var(--purple);border:1px solid #b8a8e8}
+.t-dual .step-pill{background:var(--orange-lt);color:var(--orange);border:1px solid #f0b898}
+.t-optimal .step-pill{background:var(--green-lt);color:var(--green);border:1px solid #90c8a8}
+.t-after .step-pill{background:#e8f0ff;color:#2255cc;border:1px solid #90b0f0}
+.t-gomory .step-pill{background:#f5e8ff;color:#7c3aed;border:1px solid #c890f8}
+.step-body{padding:16px 18px}
+
+/* INFO BOXES */
+.info-box{border-radius:var(--r-md);padding:12px 15px;margin-bottom:14px;font-size:13px;line-height:1.8;color:var(--ink2);border-left:4px solid}
+.info-box strong{font-weight:700;color:var(--ink)}
+.info-box code{font-family:var(--mono);font-size:12px;background:rgba(0,0,0,.05);padding:1px 6px;border-radius:3px}
+.ib-init{background:var(--teal-lt);border-color:var(--teal)}
+.ib-opt{background:var(--green-lt);border-color:var(--green)}
+.ib-primal{background:var(--purple-lt);border-color:var(--purple)}
+.ib-dual{background:var(--orange-lt);border-color:var(--orange)}
+.ib-after{background:#eaf0ff;border-color:#6090e0}
+
+/* PIVOT CHIPS */
+.pchips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 12px}
+.pchip{display:flex;align-items:center;gap:7px;padding:7px 12px;border-radius:var(--r-sm);border:1.5px solid;font-size:12.5px}
+.pchip.c-enter{background:#f0ecff;border-color:#c0a8f0}
+.pchip.c-leave{background:#fff2ec;border-color:#f0b090}
+.pchip.c-pivot{background:var(--teal-lt);border-color:var(--teal-mid)}
+.pchip-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.pchip.c-enter .pchip-dot{background:var(--purple)}
+.pchip.c-leave .pchip-dot{background:var(--orange)}
+.pchip.c-pivot .pchip-dot{background:var(--teal)}
+.pchip-lbl{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--ink3)}
+.pchip-val{font-family:var(--mono);font-size:13px;font-weight:700}
+.pchip.c-enter .pchip-val{color:var(--purple)}
+.pchip.c-leave .pchip-val{color:var(--orange)}
+.pchip.c-pivot .pchip-val{color:var(--teal)}
+
+/* RATIO TEST TABLE */
+.ratio-wrap{margin-top:10px;padding-top:10px;border-top:1px dashed var(--line)}
+.ratio-lbl{font-family:var(--mono);font-size:9.5px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink3);margin-bottom:8px}
+table.rtbl{border-collapse:collapse;font-family:var(--mono);font-size:12px}
+table.rtbl th{background:var(--ink2);color:rgba(255,255,255,.85);padding:5px 12px;text-align:center;font-size:10px;font-weight:500;letter-spacing:.5px;border-right:1px solid rgba(255,255,255,.12)}
+table.rtbl th:last-child{border-right:none}
+table.rtbl td{padding:5px 12px;text-align:center;border:1px solid var(--line);color:var(--ink2)}
+table.rtbl tr.r-min td{background:var(--gold-lt);color:var(--gold);font-weight:700}
+.r-pick{color:var(--orange);font-weight:700;font-size:11px}
+
+/* SIMPLEX TABLE */
+.tbl-scroll{overflow-x:auto;border-radius:var(--r-md);border:1.5px solid var(--line);margin-top:4px}
+table.stab{border-collapse:collapse;min-width:100%;font-family:var(--mono);font-size:13px}
+table.stab thead tr{background:var(--ink)}
+table.stab thead th{padding:9px 14px;text-align:center;color:rgba(255,255,255,.82);font-size:10.5px;font-weight:600;letter-spacing:.8px;white-space:nowrap;border-right:1px solid rgba(255,255,255,.1)}
+table.stab thead th:first-child{text-align:left;min-width:78px}
+table.stab thead th:last-child{border-right:none;background:rgba(13,115,119,.35)}
+table.stab thead th.h-enter{background:rgba(80,64,160,.6)!important;color:white!important}
+table.stab tbody tr{border-bottom:1px solid var(--line)}
+table.stab tbody tr:last-child{border-bottom:none}
+table.stab tbody td{padding:9px 14px;text-align:center;border-right:1px solid var(--line);white-space:nowrap;color:var(--ink2);font-size:13px}
+table.stab tbody td:last-child{border-right:none}
+table.stab tbody td:first-child{text-align:left;font-weight:700;font-size:12px;letter-spacing:.2px}
+
+/* CELL STATES */
+/* Basis var: dark bg */
+td.c-basis{background:var(--ink2)!important;color:white!important;font-weight:700!important}
+/* Leaving row basis: orange */
+td.c-basis-lv{background:var(--orange)!important;color:white!important;font-weight:700!important}
+/* Entering column: soft purple */
+td.c-enter{background:#ede8ff!important;color:#3828a0!important;font-weight:600!important}
+/* Leaving row: soft orange */
+td.c-leave{background:#fff0e8!important;color:#a03810!important;font-weight:600!important}
+
+/* ═══════════════════════════════════════
+   PIVOT CELL FIX:
+   White background + dark teal text + teal border outline
+   → Always readable regardless of row/column color
+   ═══════════════════════════════════════ */
+td.c-pivot{
+  background:#ffffff!important;
+  color:#065860!important;
+  font-weight:800!important;
+  box-shadow:inset 0 0 0 2.5px #0d7377!important;
+  position:relative;z-index:2;
+}
+td.c-pivot::after{content:'↗';position:absolute;top:1px;right:3px;font-size:8px;color:#0d7377;opacity:.85}
+
+/* RHS column */
+td.c-rhs{background:rgba(13,115,119,.05)!important;font-weight:600!important}
+td.c-rhs.c-leave{background:#fff0e8!important}
+
+/* OBJ ROW (c_j - z_j) */
+tr.obj-row{border-top:2.5px double var(--line)!important}
+tr.obj-row td{background:#f7f6f2!important;color:var(--ink3)!important;font-weight:500!important;font-style:italic}
+tr.obj-row td:first-child{font-style:normal;font-weight:700!important;color:var(--ink)!important;font-family:var(--serif);font-size:13.5px}
+/* Z value cell */
+td.z-val{background:#e6f3ec!important;color:var(--green)!important;font-weight:700!important;font-style:normal!important}
+/* Basis vars: cj-zj = 0 */
+td.cj-zero{color:#ccc!important;font-weight:400!important;font-style:italic}
+/* Non-basis positive = candidate */
+td.cj-pos{color:var(--purple)!important;font-weight:700!important;background:#f0ecff!important;font-style:normal!important}
+/* Selected entering var in obj row */
+td.cj-enter{color:var(--purple)!important;font-weight:800!important;background:#e4dcff!important;font-style:normal!important}
+/* Negative/zero non-basis */
+td.cj-neg{color:#aaa!important;font-style:italic}
+
+/* Number colors in data cells */
+.vpos{color:var(--green)}.vneg{color:var(--red)}.vzer{color:#bbb}
+
+/* RESULT PANEL */
+.result-panel{background:linear-gradient(135deg,var(--green-lt),#bce4cc);border:2px solid #7abf98;border-radius:var(--r-lg);padding:20px 22px;margin-top:18px}
+.result-panel.is-int{background:linear-gradient(135deg,#f0e4ff,#ddc8ff);border-color:#b080f0}
+.result-head{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.result-icon{width:32px;height:32px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;color:white;font-size:15px;flex-shrink:0}
+.result-panel.is-int .result-icon{background:#7c3aed}
+.result-title{font-family:var(--serif);font-style:italic;font-size:19px;color:var(--ink)}
+.result-cards{display:flex;flex-wrap:wrap;gap:9px}
+.rc{background:white;border:1.5px solid rgba(0,0,0,.08);border-radius:var(--r-md);padding:11px 16px;min-width:100px;box-shadow:var(--sh-sm)}
+.rc.z-rc{border-color:var(--green);min-width:130px}
+.result-panel.is-int .rc.z-rc{border-color:#7c3aed}
+.rc-lbl{font-family:var(--mono);font-size:9.5px;font-weight:700;color:var(--ink3);letter-spacing:1.2px;text-transform:uppercase;margin-bottom:4px}
+.rc-val{font-family:var(--mono);font-size:22px;font-weight:700;color:var(--green);line-height:1;letter-spacing:-.5px}
+.rc.z-rc .rc-val{font-size:27px;letter-spacing:-1px}
+.result-panel.is-int .rc-val{color:#7c3aed}
+
+/* GOMORY */
+.gom-div{display:flex;align-items:center;gap:14px;margin:28px 0 22px}
+.gom-div-line{flex:1;height:1.5px;background:var(--line)}
+.gom-div-pill{background:var(--ink2);color:white;font-family:var(--mono);font-size:9.5px;font-weight:600;letter-spacing:2px;text-transform:uppercase;padding:5px 16px;border-radius:20px;white-space:nowrap}
+.gom-box{background:#f9f0ff;border:1.5px solid #d0a8f8;border-left:4px solid #7c3aed;border-radius:0 var(--r-md) var(--r-md) 0;padding:12px 15px;margin-bottom:14px;font-size:13px;line-height:1.9;color:var(--ink2)}
+.gom-box strong{color:#5a1a9a;font-weight:700}
+.gom-box code{font-family:var(--mono);font-size:12.5px;font-weight:600;background:white;border:1px solid #d0a8f8;padding:1px 7px;border-radius:4px;color:#7c3aed}
+
+/* ALERTS */
+.alert-box{border-radius:var(--r-md);padding:13px 17px;font-size:13px;font-weight:500;margin-top:14px;display:flex;align-items:flex-start;gap:10px;letter-spacing:.1px}
+.alert-box .aico{font-size:15px;flex-shrink:0}
+.a-warn{background:var(--red-lt);border:1.5px solid #f0a090;color:var(--red)}
+.a-ok{background:var(--green-lt);border:1.5px solid #90c8a8;color:var(--green)}
+</style>
+</head>
+<body>
+<div class="layout">
+
+<!-- SIDEBAR -->
+<aside class="sidebar"><div class="sb-inner">
+  <div class="logo-area">
+    <div class="logo-eyebrow">LP Solver</div>
+    <div class="logo-title">Tối Ưu Tuyến Tính</div>
+    <div class="logo-sub">Đơn hình · Đối ngẫu · Gomory</div>
+  </div>
+  <div class="slbl">Cấu hình <span></span></div>
+  <div class="frow">
+    <div class="field"><label>Số biến (n)</label><input type="number" id="nv" min="1" max="8" value="2" onchange="buildForm()"></div>
+    <div class="field"><label>Ràng buộc (m)</label><input type="number" id="nc" min="1" max="12" value="2" onchange="buildForm()"></div>
+  </div>
+  <div class="field" style="margin-bottom:10px">
+    <label>Mục tiêu</label>
+    <select id="ot" class="sel-full">
+      <option value="max">Tối đa hoá — Max Z</option>
+      <option value="min">Tối thiểu hoá — Min Z</option>
+    </select>
+  </div>
+  <div class="slbl">Hàm mục tiêu <span></span></div>
+  <div class="obj-strip" id="objdiv"><span class="z-lbl">Z =</span></div>
+  <div class="slbl">Ràng buộc <span></span></div>
+  <div class="con-block" id="condiv"></div>
+  <div class="nn-note" id="nnlbl">x₁, x₂ ≥ 0</div>
+  <div class="slbl">Tùy chọn <span></span></div>
+  <div class="toggle-list">
+    <label class="tgl"><input type="checkbox" id="sfrac" checked><div><div class="tgl-main">Hiển thị phân số chính xác</div><div class="tgl-sub">Kết quả dạng p/q thay vì số thập phân</div></div></label>
+    <label class="tgl"><input type="checkbox" id="sint"><div><div class="tgl-main">Nghiệm nguyên (Gomory)</div><div class="tgl-sub">Chạy thuật toán cắt sau khi có nghiệm LP</div></div></label>
+  </div>
+  <div class="action-area">
+    <button class="btn-solve" onclick="solve()">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      Giải bài toán
+    </button>
+    <div class="btn-row">
+      <button class="btn-ex" onclick="ex(1)">Ví dụ 1 (Max ≤)</button>
+      <button class="btn-ex" onclick="ex(2)">Ví dụ 2 (Min ≥)</button>
+      <button class="btn-ex" onclick="ex(3)">Gomory</button>
+      <button class="btn-clr" onclick="clrAll()">Xóa</button>
+    </div>
+  </div>
+</div></aside>
+
+<!-- MAIN -->
+<main class="main">
+  <div class="placeholder-wrap" id="placeholder">
+    <div class="placeholder-icon">∑</div>
+    <div class="placeholder-title">Chưa có kết quả</div>
+    <div class="placeholder-desc">Nhập dữ liệu bên trái rồi nhấn <strong>Giải bài toán</strong>.</div>
+  </div>
+  <div id="sol"></div>
+</main>
+</div>
+<div class="statusbar"><div class="sdot" id="sdot"></div><span id="stxt">Sẵn sàng</span></div>
+
+<script>
+/* ═══ RATIONAL ARITHMETIC ═══ */
+function igcd(a,b){a=Math.abs(a);b=Math.abs(b);while(b){const t=b;b=a%b;a=t}return a||1}
+class Q{
+  constructor(p,q){
+    if(q===undefined){
+      if(Number.isInteger(p)){this.p=p;this.q=1}
+      else{const S=1e9;let ip=Math.round(p*S),iq=S;const g=igcd(Math.abs(ip),iq);this.p=ip/g;this.q=iq/g}
+    }else{
+      if(q===0)throw'div/0';
+      const g=igcd(Math.abs(p),Math.abs(q));this.p=p/g;this.q=q/g;
+      if(this.q<0){this.p=-this.p;this.q=-this.q}
+    }
+  }
+  add(b){return new Q(this.p*b.q+b.p*this.q,this.q*b.q)}
+  sub(b){return new Q(this.p*b.q-b.p*this.q,this.q*b.q)}
+  mul(b){return new Q(this.p*b.p,this.q*b.q)}
+  div(b){return new Q(this.p*b.q,this.q*b.p)}
+  neg(){return new Q(-this.p,this.q)}
+  eq(b){return this.p===b.p&&this.q===b.q}
+  lt(b){return this.p*b.q<b.p*this.q}
+  lte(b){return this.p*b.q<=b.p*this.q}
+  gt(b){return this.p*b.q>b.p*this.q}
+  isZero(){return this.p===0}
+  val(){return this.p/this.q}
+  clone(){return new Q(this.p,this.q)}
+  floorInt(){return Math.floor(this.p/this.q)}
+  fracPart(){return new Q(this.p-this.floorInt()*this.q,this.q)}
+  isInteger(){return this.p%this.q===0}
+  str(){return this.isInteger()?String(this.floorInt()):this.p+'/'+this.q}
+  // Colored span for data cells
+  html(frac){
+    const v=this.val();
+    const cls=Math.abs(v)<1e-9?'vzer':v>0?'vpos':'vneg';
+    return`<span class="${cls}">${this._fmt(frac)}</span>`
+  }
+  // Plain text (no color span) — used in obj row and result panel
+  plain(frac){return this._fmt(frac)}
+  _fmt(frac){
+    const v=this.val();
+    if(!frac){const r=Math.round(v*1e5)/1e5;return Math.abs(r)<1e-9?'0':String(r)}
+    if(this.isInteger())return String(this.floorInt());
+    const s=this.p<0?'−':'';const a=Math.abs(this.p);
+    return`<sup>${s}${a}</sup>/<sub>${this.q}</sub>`
+  }
+}
+const ZERO=new Q(0),ONE=new Q(1);
+function q(p,d){return d!==undefined?new Q(p,d):new Q(p)}
+
+/* ═══ FORM BUILDER ═══ */
+function buildForm(){
+  const n=+document.getElementById('nv').value||2;
+  const m=+document.getElementById('nc').value||2;
+  const od=document.getElementById('objdiv');
+  const pC=Array.from(od.querySelectorAll('input')).map(i=>i.value);
+  od.innerHTML='<span class="z-lbl">Z =</span>';
+  for(let j=0;j<n;j++){
+    if(j>0){const s=document.createElement('span');s.className='math-op';s.textContent='+';od.appendChild(s)}
+    const inp=document.createElement('input');inp.type='number';inp.id='c'+j;inp.placeholder='0';inp.step='any';
+    if(pC[j])inp.value=pC[j];od.appendChild(inp);
+    const lbl=document.createElement('span');lbl.className='math-lbl';lbl.innerHTML=`x<sub>${j+1}</sub>`;od.appendChild(lbl);
+  }
+  const cd=document.getElementById('condiv');
+  const pR=Array.from(cd.querySelectorAll('.con-row')).map(r=>({c:Array.from(r.querySelectorAll('.cc')).map(i=>i.value),t:r.querySelector('select').value,b:r.querySelector('.rb').value}));
+  cd.innerHTML='';
+  for(let i=0;i<m;i++){
+    const row=document.createElement('div');row.className='con-row';
+    const nm=document.createElement('span');nm.className='con-idx';nm.textContent=i+1;row.appendChild(nm);
+    for(let j=0;j<n;j++){
+      if(j>0){const s=document.createElement('span');s.className='math-op';s.textContent='+';row.appendChild(s)}
+      const inp=document.createElement('input');inp.type='number';inp.className='cc';inp.placeholder='0';inp.step='any';
+      if(pR[i]?.c[j])inp.value=pR[i].c[j];row.appendChild(inp);
+      const lbl=document.createElement('span');lbl.className='math-lbl';lbl.innerHTML=`x<sub>${j+1}</sub>`;row.appendChild(lbl);
+    }
+    const sel=document.createElement('select');
+    ['≤','≥','='].forEach(v=>{const o=document.createElement('option');o.value=o.textContent=v;sel.appendChild(o)});
+    sel.value=pR[i]?.t||'≤';row.appendChild(sel);
+    const rhs=document.createElement('input');rhs.type='number';rhs.className='rb con-rhs';rhs.placeholder='0';rhs.step='any';
+    if(pR[i]?.b)rhs.value=pR[i].b;row.appendChild(rhs);
+    cd.appendChild(row);
+  }
+  document.getElementById('nnlbl').innerHTML=Array.from({length:n},(_,i)=>`x<sub>${i+1}</sub>`).join(', ')+' ≥ 0';
+}
+
+/* ═══ READ INPUT ═══ */
+function readInput(){
+  const n=+document.getElementById('nv').value;
+  const m=+document.getElementById('nc').value;
+  const ot=document.getElementById('ot').value;
+  const sfrac=document.getElementById('sfrac').checked;
+  const sint=document.getElementById('sint').checked;
+  const c=[];for(let j=0;j<n;j++){const v=parseFloat(document.getElementById('c'+j).value);c.push(isNaN(v)?0:v)}
+  const A=[],b=[],types=[];
+  document.getElementById('condiv').querySelectorAll('.con-row').forEach(row=>{
+    const cs=Array.from(row.querySelectorAll('.cc')).map(i=>{const v=parseFloat(i.value);return isNaN(v)?0:v});
+    A.push(cs);types.push(row.querySelector('select').value);
+    const v=parseFloat(row.querySelector('.rb').value);b.push(isNaN(v)?0:v);
+  });
+  return{n,m,ot,sfrac,sint,c,A,b,types};
+}
+
+/* ═══ STANDARD FORM ═══ */
+function buildSF(inp){
+  const{n,m,ot,c,A,b,types}=inp;
+  const Aq=A.map(r=>r.map(v=>q(v)));
+  const bq=b.map(v=>q(v));
+  const tw=[...types];
+  for(let i=0;i<m;i++){
+    if(bq[i].val()<-1e-12){
+      Aq[i]=Aq[i].map(v=>v.neg());bq[i]=bq[i].neg();
+      if(tw[i]==='≤')tw[i]='≥';else if(tw[i]==='≥')tw[i]='≤';
+    }
+  }
+  const vn=[],vt=[];
+  for(let j=0;j<n;j++){vn[j]=`x${j+1}`;vt[j]='x'}
+  let xi=n,sc=0,ec=0,ac=0;
+  const slk=[],art=[],artSet=new Set();
+  for(let i=0;i<m;i++){
+    if(tw[i]==='≤'){vn[xi]=`s${++sc}`;vt[xi]='s';slk.push(xi);art.push(-1);xi++}
+    else if(tw[i]==='≥'){
+      vn[xi]=`e${++ec}`;vt[xi]='e';slk.push(xi);xi++;
+      vn[xi]=`a${++ac}`;vt[xi]='art';art.push(xi);artSet.add(xi);xi++;
+    }else{slk.push(-1);vn[xi]=`a${++ac}`;vt[xi]='art';art.push(xi);artSet.add(xi);xi++}
+  }
+  const NV=xi;
+  const rows=[],basis=[];
+  for(let i=0;i<m;i++){
+    const coefs=Array.from({length:NV},()=>ZERO.clone());
+    for(let j=0;j<n;j++)coefs[j]=Aq[i][j].clone();
+    const si=slk[i],ai=art[i];
+    if(si>=0)coefs[si]=tw[i]==='≤'?ONE.clone():new Q(-1);
+    if(ai>=0)coefs[ai]=ONE.clone();
+    rows.push({coefs,rhs:bq[i].clone()});
+    basis.push(ai>=0?ai:si);
+  }
+  const obj=Array.from({length:NV},()=>ZERO.clone());
+  for(let j=0;j<n;j++)obj[j]=ot==='max'?q(c[j]):q(-c[j]);
+  for(let i=0;i<m;i++)if(art[i]>=0)obj[art[i]]=q(-1e7);
+  return{vn,vt,rows,basis,obj,NV,m,n,artSet};
+}
+
+function makeTab(sf){
+  const{vn,rows,basis,obj,NV,m,artSet}=sf;
+  const tab=rows.map(r=>r.coefs.map(v=>v.clone()));
+  const rhs=rows.map(r=>r.rhs.clone());
+  const o=obj.map(v=>v.clone());
+  let zv=ZERO.clone();
+  // Row-reduce objective for initial basis
+  for(let i=0;i<m;i++){
+    const bv=basis[i];
+    if(!o[bv].isZero()){
+      const coef=o[bv].clone();
+      for(let j=0;j<NV;j++)o[j]=o[j].sub(coef.mul(tab[i][j]));
+      zv=zv.sub(coef.mul(rhs[i]));
+    }
+  }
+  return{tab,rhs,obj:o,zv,basis:[...basis],vn:[...vn],m,NV,artSet};
+}
+
+function cloneT(T){
+  return{tab:T.tab.map(r=>r.map(v=>v.clone())),rhs:T.rhs.map(v=>v.clone()),obj:T.obj.map(v=>v.clone()),zv:T.zv.clone(),basis:[...T.basis],vn:[...T.vn],m:T.m,NV:T.NV,artSet:new Set(T.artSet)};
+}
+
+/* ═══ PIVOT ═══ */
+function doPivot(T,lr,ec){
+  const piv=T.tab[lr][ec];if(piv.isZero())throw'Zero pivot';
+  const pi=ONE.div(piv);
+  for(let j=0;j<T.NV;j++)T.tab[lr][j]=T.tab[lr][j].mul(pi);
+  T.rhs[lr]=T.rhs[lr].mul(pi);
+  for(let i=0;i<T.m;i++){
+    if(i===lr)continue;
+    const f=T.tab[i][ec];if(f.isZero())continue;
+    for(let j=0;j<T.NV;j++)T.tab[i][j]=T.tab[i][j].sub(f.mul(T.tab[lr][j]));
+    T.rhs[i]=T.rhs[i].sub(f.mul(T.rhs[lr]));
+  }
+  const fo=T.obj[ec];
+  if(!fo.isZero()){
+    for(let j=0;j<T.NV;j++)T.obj[j]=T.obj[j].sub(fo.mul(T.tab[lr][j]));
+    T.zv=T.zv.sub(fo.mul(T.rhs[lr]));
+  }
+  T.basis[lr]=ec;
+}
+
+function findEnter(T){let best=-1,bv=q(1e-9);for(let j=0;j<T.NV;j++)if(!T.basis.includes(j)&&T.obj[j].gt(bv)){bv=T.obj[j].clone();best=j}return best}
+function findLeave(T,ec){let best=-1,br=null;for(let i=0;i<T.m;i++){const a=T.tab[i][ec];if(a.gt(q(1e-12))){const r=T.rhs[i].div(a);if(br===null||r.lt(br)||(r.eq(br)&&T.basis[i]<T.basis[best])){br=r;best=i}}}return best}
+function findDual(T){
+  let lr=-1,mn=q(-1e-9);
+  for(let i=0;i<T.m;i++)if(T.rhs[i].lt(mn)){mn=T.rhs[i].clone();lr=i}
+  if(lr===-1)return null;
+  let ec=-1,mr=null;
+  for(let j=0;j<T.NV;j++){const a=T.tab[lr][j];if(a.lt(q(-1e-12))){const r=T.obj[j].div(a);if(mr===null||r.lt(mr)){mr=r;ec=j}}}
+  if(ec===-1)return null;
+  return{lr,ec};
+}
+
+/* ═══ MAIN SOLVER ═══ */
+function solve(){
+  const inp=readInput();
+  setStatus('run','Đang giải…');
+  document.getElementById('placeholder').style.display='none';
+  document.getElementById('sol').innerHTML='';
+  let html='';
+  try{html=runSolver(inp)}catch(e){html=mkAlert('warn','Lỗi: '+e);console.error(e)}
+  document.getElementById('sol').innerHTML=html;
+  const good=document.getElementById('sol').querySelector('.result-panel');
+  setStatus(good?'ok':'','Hoàn tất');
+}
+function setStatus(t,txt){document.getElementById('sdot').className='sdot'+(t?' '+t:'');document.getElementById('stxt').textContent=txt}
+
+function runSolver(inp){
+  const{sfrac,sint,ot,n}=inp;
+  let html='';
+  const sf=buildSF(inp);
+  let T=makeTab(sf);
+  let step=0,status='';
+
+  html+=buildProbHeader(inp,sf);
+  // Bảng khởi đầu
+  html+=renderStep(cloneT(T),-1,-1,step++,'Bảng đơn hình khởi đầu','init',sfrac,ot);
+
+  for(let it=0;it<200;it++){
+    const dualFeas=T.obj.every(v=>v.lte(q(1e-9)));
+    const hasNegRhs=T.rhs.findIndex(v=>v.lt(q(-1e-9)));
+
+    if(dualFeas&&hasNegRhs>=0){
+      // Dual simplex
+      const dp=findDual(T);
+      if(!dp){status='infeasible';break}
+      const snap=cloneT(T);
+      html+=renderStep(snap,dp.ec,dp.lr,step++,`Đơn hình đối ngẫu — Bước ${step-1}`,'dual',sfrac,ot);
+      doPivot(T,dp.lr,dp.ec);
+      html+=renderStep(cloneT(T),-1,-1,step++,`Bảng sau phép xoay (đối ngẫu) — Bước ${step-1}`,'after',sfrac,ot);
+      continue;
+    }
+
+    const ec=findEnter(T);
+    if(ec===-1){status='optimal';break}
+    const lr=findLeave(T,ec);
+    if(lr===-1){status='unbounded';break}
+
+    const snap=cloneT(T);
+    html+=renderStep(snap,ec,lr,step++,`Đơn hình thường — Bước ${step-1}`,'primal',sfrac,ot);
+    doPivot(T,lr,ec);
+    html+=renderStep(cloneT(T),-1,-1,step++,`Bảng sau phép xoay — Bước ${step-1}`,'after',sfrac,ot);
+  }
+
+  if(status==='optimal'){
+    const stuck=T.basis.some((bv,i)=>T.artSet.has(bv)&&Math.abs(T.rhs[i].val())>1e-8);
+    if(stuck)return html+mkAlert('warn','Bài toán vô nghiệm: biến nhân tạo còn dương trong cơ sở.');
+    html+=renderStep(cloneT(T),-1,-1,step,'Bảng đơn hình tối ưu cuối cùng','optimal',sfrac,ot);
+    html+=buildResultPanel(T,n,ot,sfrac,false);
+    if(sint){
+      html+=`<div class="gom-div"><div class="gom-div-line"></div><div class="gom-div-pill">✦ Cắt Gomory — Nghiệm Nguyên</div><div class="gom-div-line"></div></div>`;
+      html+=runGomory(T,inp,sfrac,ot,n,step);
+    }
+  } else if(status==='unbounded'){
+    html+=mkAlert('warn','Bài toán không bị chặn (Unbounded).');
+  } else if(status==='infeasible'){
+    html+=mkAlert('warn','Bài toán vô nghiệm: không tồn tại miền chấp nhận được.');
+  } else {
+    html+=mkAlert('warn','Vượt giới hạn lặp (200).');
+  }
+  return html;
+}
+
+/* ═══ GOMORY ═══ */
+function runGomory(T,inp,sfrac,ot,origN,startStep){
+  let html='',step=startStep+1;
+  const EPS=q(1,1000000),MAX_G=30;
+  for(let iter=1;iter<=MAX_G;iter++){
+    let fr=-1,mf=EPS.clone();
+    for(let i=0;i<T.m;i++){
+      if(T.basis[i]<origN){const fp=T.rhs[i].fracPart();if(fp.gt(EPS)&&fp.lt(new Q(999999,1000000))&&fp.gt(mf)){mf=fp.clone();fr=i}}
+    }
+    if(fr===-1){
+      html+=renderStep(cloneT(T),-1,-1,step++,'Tất cả biến gốc là nguyên — Nghiệm nguyên tối ưu','optimal',sfrac,ot);
+      html+=buildResultPanel(T,origN,ot,sfrac,true);
+      html+=mkAlert('ok',`Tìm được nghiệm nguyên tối ưu sau ${iter-1} lần cắt Gomory.`);
+      return html;
+    }
+    const bvName=T.vn[T.basis[fr]];
+    const f0=T.rhs[fr].fracPart();
+    const nvi=T.NV,nvn=`g${iter}`;
+    T.vn.push(nvn);T.NV++;
+    T.tab.forEach(r=>r.push(ZERO.clone()));T.obj.push(ZERO.clone());
+    const cr=Array.from({length:T.NV},()=>ZERO.clone());
+    for(let j=0;j<T.NV-1;j++)cr[j]=T.tab[fr][j].fracPart().neg();
+    cr[nvi]=ONE.clone();
+    T.tab.push(cr);T.rhs.push(f0.neg());T.basis.push(nvi);T.m++;
+    let desc=[];
+    for(let j=0;j<T.NV-1;j++){if(!T.basis.includes(j)){const fp=cr[j].neg();if(fp.gt(EPS))desc.push(`${fp.str()}·${T.vn[j]}`)}}
+
+    html+=`<div class="step-card t-gomory"><div class="step-inner">
+      <div class="step-head">
+        <div class="step-badge">G${iter}</div>
+        <div class="step-titles">
+          <div class="step-title">Thêm điều kiện cắt Gomory #${iter}</div>
+          <div class="step-sub">Từ hàng biến cơ sở <strong>${bvName}</strong> — phần lẻ f₀ = ${f0.str()}</div>
+        </div>
+        <div class="step-pill">Gomory</div>
+      </div>
+      <div class="step-body">
+        <div class="gom-box">
+          Biến cơ sở <strong>${bvName}</strong> có giá trị không nguyên → phần lẻ <strong>f₀ = ${f0.str()}</strong><br>
+          Điều kiện Gomory: <code>${desc.join(' + ')||'0'}</code> ≥ <strong>${f0.str()}</strong><br>
+          Thêm biến bù <strong><code>${nvn}</code></strong> vào hàng mới với RHS = <strong>−${f0.str()}</strong> (sẽ dùng đối ngẫu để phục hồi khả thi)
+        </div>
+        <div class="tbl-scroll">${buildTable(cloneT(T),-1,T.m-1,sfrac,ot)}</div>
+      </div>
+    </div></div>`;
+
+    let di=0;
+    while(di++<50){
+      const dp=findDual(T);if(!dp)break;
+      const snap=cloneT(T);
+      html+=renderStep(snap,dp.ec,dp.lr,step++,`Đối ngẫu (sau G${iter}) — Bước ${step-1}`,'dual',sfrac,ot);
+      doPivot(T,dp.lr,dp.ec);
+      html+=renderStep(cloneT(T),-1,-1,step++,`Bảng sau phép xoay (G${iter}) — Bước ${step-1}`,'after',sfrac,ot);
+    }
+  }
+  html+=mkAlert('warn',`Đạt giới hạn lặp Gomory (${MAX_G}).`);
+  return html;
+}
+
+/* ═══ RENDER STEP ═══ */
+function renderStep(snap,ec,lr,idx,title,type,sfrac,ot){
+  const bMap={init:'★',optimal:'✓',after:'→'};
+  const badge=bMap[type]||String(idx);
+  const pMap={init:'Khởi đầu',primal:'Đơn Hình',dual:'Đối Ngẫu',optimal:'Tối Ưu',after:'Sau Xoay',gomory:'Gomory'};
+
+  let info='';
+
+  if(type==='init'){
+    const bNames=snap.basis.map(b=>snap.vn[b]).join(', ');
+    const arts=snap.basis.filter(b=>snap.artSet.has(b)).map(b=>snap.vn[b]);
+    info=`<div class="info-box ib-init">
+      <strong>Cơ sở ban đầu:</strong> { ${bNames} }<br>
+      ${arts.length?`⚠ Có biến nhân tạo: <strong>${arts.join(', ')}</strong> — xử lý bằng Big-M = 10<sup>7</sup><br>`:''}
+      Xét hàng <strong>c<sub>j</sub> − z<sub>j</sub></strong>: chọn cột có giá trị <em>dương lớn nhất</em> làm biến vào. Nếu không có → tối ưu.
+    </div>`;
+
+  } else if(type==='optimal'){
+    info=`<div class="info-box ib-opt">
+      ✓ <strong>Điều kiện tối ưu đạt được:</strong> Tất cả c<sub>j</sub> − z<sub>j</sub> ≤ 0 với mọi biến không cơ sở.<br>
+      Không còn hướng cải thiện hàm mục tiêu.
+    </div>`;
+
+  } else if(type==='after'){
+    const bNames=snap.basis.map(b=>snap.vn[b]).join(', ');
+    let zv=snap.zv.clone();if(ot==='min')zv=zv.neg();
+    info=`<div class="info-box ib-after">
+      <strong>Cơ sở mới:</strong> { ${bNames} } &nbsp;·&nbsp; <strong>Z = ${zv.plain(sfrac)}</strong><br>
+      Kiểm tra lại hàng c<sub>j</sub> − z<sub>j</sub> để xác định bước tiếp theo.
+    </div>`;
+
+  } else if((type==='primal'||type==='dual')&&ec>=0&&lr>=0){
+    const pivVal=snap.tab[lr][ec].str();
+
+    // Entering reason
+    let enterReason='';
+    if(type==='primal'){
+      let cands=[];
+      for(let j=0;j<snap.NV;j++){
+        if(!snap.basis.includes(j)&&snap.obj[j].gt(q(1e-9)))
+          cands.push(`<strong>${snap.vn[j]}</strong> (${snap.obj[j].plain(sfrac)})`);
+      }
+      enterReason=`Các c<sub>j</sub>−z<sub>j</sub> > 0: ${cands.join(', ')}<br>
+        → Chọn <strong>${snap.vn[ec]}</strong> vì có giá trị lớn nhất = <strong>${snap.obj[ec].plain(sfrac)}</strong>`;
+    } else {
+      enterReason=`Hàng <strong>${snap.vn[snap.basis[lr]]}</strong> có b = <strong>${snap.rhs[lr].str()}</strong> &lt; 0 → chọn ra khỏi cơ sở.<br>
+        Tỉ số đối ngẫu min(c<sub>j</sub>−z<sub>j</sub>) / |a<sub>ij</sub>| → chọn vào: <strong>${snap.vn[ec]}</strong>`;
+    }
+
+    // Ratio test rows
+    let ratioHtml='';
+    if(type==='primal'){
+      const rows=[];
+      for(let i=0;i<snap.m;i++){
+        const a=snap.tab[i][ec];
+        if(a.gt(q(1e-12))){
+          const r=snap.rhs[i].div(a);
+          rows.push({i,bv:snap.vn[snap.basis[i]],b:snap.rhs[i].str(),a:a.str(),r:r.str(),isMin:i===lr});
+        }
+      }
+      if(rows.length){
+        ratioHtml=`<div class="ratio-wrap">
+          <div class="ratio-lbl">Kiểm tra tỉ số θ = b / a<sub>i,col</sub> — chọn hàng có θ nhỏ nhất (biến ra):</div>
+          <table class="rtbl"><thead><tr>
+            <th>Hàng i</th><th>Cơ sở x<sub>B</sub></th><th>b<sub>i</sub></th>
+            <th>a<sub>i,${ec+1}</sub></th><th>θ = b/a</th><th>Chọn?</th>
+          </tr></thead><tbody>${rows.map(r=>`
+            <tr class="${r.isMin?'r-min':''}">
+              <td>${r.i+1}</td><td>${r.bv}</td><td>${r.b}</td>
+              <td>${r.a}</td><td><strong>${r.r}</strong></td>
+              <td>${r.isMin?'<span class="r-pick">← Min θ (ra)</span>':''}</td>
+            </tr>`).join('')}
+          </tbody></table>
+        </div>`;
+      }
+    }
+
+    info=`<div class="info-box ib-${type==='primal'?'primal':'dual'}">${enterReason}</div>
+    <div class="pchips">
+      <div class="pchip c-enter"><span class="pchip-dot"></span><span class="pchip-lbl">Biến vào</span><span class="pchip-val">${snap.vn[ec]}</span></div>
+      <div class="pchip c-leave"><span class="pchip-dot"></span><span class="pchip-lbl">Biến ra</span><span class="pchip-val">${snap.vn[snap.basis[lr]]}</span></div>
+      <div class="pchip c-pivot"><span class="pchip-dot"></span><span class="pchip-lbl">Phần tử chốt</span><span class="pchip-val">[hàng ${lr+1}, cột ${ec+1}] = ${pivVal}</span></div>
+    </div>
+    ${ratioHtml}`;
+  }
+
+  const subMap={init:'Trạng thái cơ sở ban đầu với biến bù và biến nhân tạo',optimal:'Tất cả c_j − z_j ≤ 0 · Không thể cải thiện thêm',after:'Kết quả sau phép xoay — chuẩn bị bước tiếp theo'};
+  const sub=subMap[type]||(ec>=0&&lr>=0?`Trước phép xoay: ${snap.vn[ec]} vào, ${snap.vn[snap.basis[lr]]} ra`:'');
+
+  return`<div class="step-card t-${type}"><div class="step-inner">
+    <div class="step-head">
+      <div class="step-badge">${badge}</div>
+      <div class="step-titles">
+        <div class="step-title">${title}</div>
+        ${sub?`<div class="step-sub">${sub}</div>`:''}
+      </div>
+      <div class="step-pill">${pMap[type]||type}</div>
+    </div>
+    <div class="step-body">
+      ${info}
+      <div class="tbl-scroll">${buildTable(snap,ec,lr,sfrac,ot)}</div>
+    </div>
+  </div></div>`;
+}
+
+/* ═══ BUILD TABLE ═══
+   RULES:
+   1. Pivot cell: WHITE bg + DARK TEAL text + teal border → always readable
+   2. obj row (c_j - z_j):
+      - Basis vars: always 0 (gray)
+      - Non-basis positive: purple (entering candidates)
+      - Non-basis negative/zero: gray italic
+   3. b (RHS): always ≥ 0 in primal-feasible tableau → shown with teal tint
+   4. Z value: current obj value, shown in green
+═══ */
+function buildTable(snap,ec,lr,sfrac,ot){
+  const{tab,rhs,obj,zv,basis,vn,m,NV}=snap;
+
+  let h=`<table class="stab"><thead><tr><th>Cơ sở</th>`;
+  for(let j=0;j<NV;j++)h+=`<th${j===ec?' class="h-enter"':''}>${vn[j]}</th>`;
+  h+=`<th>b (RHS)</th></tr></thead><tbody>`;
+
+  for(let i=0;i<m;i++){
+    const isLR=i===lr;
+    h+=`<tr>`;
+    // Basis cell
+    h+=`<td class="${isLR?'c-basis-lv':'c-basis'}">${vn[basis[i]]}</td>`;
+    // Coefficient cells
+    for(let j=0;j<NV;j++){
+      let cls='';
+      if(isLR&&j===ec) cls='c-pivot';
+      else if(isLR)    cls='c-leave';
+      else if(j===ec)  cls='c-enter';
+      h+=`<td class="${cls}">${tab[i][j].html(sfrac)}</td>`;
+    }
+    // RHS cell — should be ≥ 0 in primal feasible
+    h+=`<td class="c-rhs${isLR?' c-leave':''}">${rhs[i].html(sfrac)}</td></tr>`;
+  }
+
+  // Objective row: c_j - z_j
+  // IMPORTANT: obj[j] stores the reduced cost in maximization sense
+  // For basis vars: this is 0 by construction after row-reduction
+  // For non-basis: positive = can still improve; negative = penalized
+  // We display abs values with correct sign — positive means "can enter"
+  h+=`<tr class="obj-row"><td>c<sub>j</sub>&minus;z<sub>j</sub></td>`;
+  for(let j=0;j<NV;j++){
+    const isBasis=basis.includes(j);
+    if(isBasis){
+      // Basis vars always have cj-zj=0
+      h+=`<td class="cj-zero">0</td>`;
+      continue;
+    }
+    const v=obj[j].val();
+    let cls='';
+    if(j===ec)       cls='cj-enter';
+    else if(v>1e-9)  cls='cj-pos';
+    else if(v<-1e-9) cls='cj-neg';
+    else             cls='cj-zero';
+    h+=`<td class="${cls}">${obj[j].plain(sfrac)}</td>`;
+  }
+  // Z value: actual objective (negate back if min problem)
+  let zvDisp=zv.clone();
+  if(ot==='min') zvDisp=zvDisp.neg();
+  h+=`<td class="z-val">${zvDisp.plain(sfrac)}</td>`;
+  h+=`</tr></tbody></table>`;
+  return h;
+}
+
+/* ═══ PROBLEM HEADER ═══ */
+function buildProbHeader(inp,sf){
+  const{n,m,ot,c,A,b,types}=inp;
+  const lbl=ot==='max'?'Max Z =':'Min Z =';
+  const objStr=c.map((ci,j)=>{const s=j>0?(ci>=0?' + ':' − '):'';const v=j>0?Math.abs(ci):ci;return`${s}${v}x<sub>${j+1}</sub>`}).join('');
+  const conRows=A.map((row,i)=>{
+    const lhs=row.map((a,j)=>{const s=j>0?(a>=0?' + ':' − '):'';const v=j>0?Math.abs(a):a;return`${s}${v}x<sub>${j+1}</sub>`}).join('');
+    return`<div class="prob-con-row"><span class="prob-con-idx">${i+1}.</span><span class="prob-con-expr">${lhs}</span><span class="prob-con-sign">${types[i]}</span><span class="prob-con-rhs">${b[i]}</span></div>`;
+  }).join('');
+  const nn=Array.from({length:n},(_,i)=>`x<sub>${i+1}</sub>`).join(', ')+' ≥ 0';
+  const sfVars=sf.vn.slice(n).join(', ');
+  return`<div class="prob-card">
+    <div class="prob-eyebrow">Bài toán đầu vào</div>
+    <div class="prob-obj"><span class="prob-obj-lbl">${lbl}</span><span class="prob-obj-expr">${objStr}</span></div>
+    <div class="prob-con-lbl">Ràng buộc:</div>${conRows}
+    <div class="prob-nn">${nn}</div>
+    <div class="prob-sf">Biến bổ sung khi chuyển về dạng chuẩn: <strong style="color:var(--teal)">${sfVars||'(không có)'}</strong></div>
+  </div>`;
+}
+
+/* ═══ RESULT PANEL ═══ */
+function buildResultPanel(T,origN,ot,sfrac,isInt){
+  const sol={};
+  for(let i=0;i<T.m;i++)sol[T.vn[T.basis[i]]]=T.rhs[i].clone();
+  for(let j=0;j<T.NV;j++)if(!(T.vn[j] in sol))sol[T.vn[j]]=ZERO.clone();
+  let zv=T.zv.clone();if(ot==='min')zv=zv.neg();
+  const zlbl=ot==='max'?'Z<sub>max</sub>':'Z<sub>min</sub>';
+  let cards=`<div class="rc z-rc"><div class="rc-lbl">${zlbl}</div><div class="rc-val">${zv.plain(sfrac)}</div></div>`;
+  for(let j=0;j<origN;j++){const v=sol['x'+(j+1)]||ZERO;cards+=`<div class="rc"><div class="rc-lbl">x<sub>${j+1}</sub></div><div class="rc-val">${v.plain(sfrac)}</div></div>`}
+  return`<div class="result-panel${isInt?' is-int':''}">
+    <div class="result-head"><div class="result-icon">${isInt?'⬡':'◆'}</div><div class="result-title">${isInt?'Nghiệm Nguyên Tối Ưu':'Nghiệm Tối Ưu'}</div></div>
+    <div class="result-cards">${cards}</div>
+  </div>`;
+}
+
+function mkAlert(t,msg){return`<div class="alert-box ${t==='warn'?'a-warn':'a-ok'}"><span class="aico">${t==='warn'?'⚠':'✓'}</span><span>${msg}</span></div>`}
+
+/* ═══ EXAMPLES ═══ */
+function ex(n){
+  clrAll();
+  if(n===1){
+    document.getElementById('nv').value=2;document.getElementById('nc').value=3;
+    document.getElementById('ot').value='max';buildForm();
+    document.getElementById('c0').value=5;document.getElementById('c1').value=4;
+    const rs=document.getElementById('condiv').querySelectorAll('.con-row');
+    setRow(rs[0],[6,4],'≤',24);setRow(rs[1],[1,2],'≤',6);setRow(rs[2],[-1,1],'≤',1);
+    document.getElementById('sint').checked=false;
+  }else if(n===2){
+    document.getElementById('nv').value=2;document.getElementById('nc').value=2;
+    document.getElementById('ot').value='min';buildForm();
+    document.getElementById('c0').value=2;document.getElementById('c1').value=3;
+    const rs=document.getElementById('condiv').querySelectorAll('.con-row');
+    setRow(rs[0],[1,2],'≥',4);setRow(rs[1],[2,1],'≥',3);
+    document.getElementById('sint').checked=false;
+  }else if(n===3){
+    document.getElementById('nv').value=2;document.getElementById('nc').value=2;
+    document.getElementById('ot').value='max';buildForm();
+    document.getElementById('c0').value=1;document.getElementById('c1').value=1;
+    const rs=document.getElementById('condiv').querySelectorAll('.con-row');
+    setRow(rs[0],[2,2],'≤',7);setRow(rs[1],[2,10],'≤',15);
+    document.getElementById('sint').checked=true;
+  }
+}
+function setRow(row,cs,type,b){Array.from(row.querySelectorAll('.cc')).forEach((inp,i)=>inp.value=cs[i]??0);row.querySelector('select').value=type;row.querySelector('.rb').value=b}
+function clrAll(){
+  document.getElementById('objdiv').querySelectorAll('input').forEach(i=>i.value='');
+  document.getElementById('condiv').querySelectorAll('input').forEach(i=>i.value='');
+  document.getElementById('sol').innerHTML='';
+  document.getElementById('placeholder').style.display='flex';
+  setStatus('','Sẵn sàng');
+}
+
+buildForm();
+</script>
+</body>
+</html>
