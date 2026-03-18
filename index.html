@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>MathLPSol</title>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=STIX+Two+Text:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Source+Sans+3:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Source+Code+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
   --ink:#1a1a2e;--ink2:#3d3d5c;--ink3:#7b7b9a;
@@ -15,16 +15,16 @@
   --green:#1e6e40;--green-lt:#e5f5ec;
   --red:#c0392b;--red-lt:#fdecea;
   --gold:#7a5a00;--gold-lt:#fef8e6;
-  --sans:'Plus Jakarta Sans',sans-serif;
-  --serif:'Instrument Serif',serif;
-  --mono:'JetBrains Mono',monospace;
+  --sans:'Source Sans 3',sans-serif;
+  --serif:'STIX Two Text',serif;
+  --mono:'Source Code Pro',monospace;
   --r-sm:6px;--r-md:10px;--r-lg:16px;
   --sh-sm:0 1px 3px rgba(26,26,46,.08),0 1px 2px rgba(26,26,46,.05);
   --sh-md:0 4px 14px rgba(26,26,46,.10),0 2px 4px rgba(26,26,46,.06);
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.6;min-height:100vh;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.65;min-height:100vh;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;font-feature-settings:"kern" 1,"liga" 1}
 
 /* LAYOUT */
 .layout{display:grid;grid-template-columns:370px 1fr;min-height:100vh}
@@ -35,24 +35,24 @@ body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:
 /* LOGO */
 .logo-eyebrow{font-family:var(--mono);font-size:9.5px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:var(--teal);margin-bottom:7px;display:flex;align-items:center;gap:8px}
 .logo-eyebrow::before{content:'';width:16px;height:2px;background:var(--teal);display:inline-block}
-.logo-title{font-family:var(--serif);font-style:italic;font-size:27px;color:var(--ink);line-height:1.15;letter-spacing:-.3px}
-.logo-sub{font-size:12px;color:var(--ink3);margin-top:5px;line-height:1.5}
+.logo-title{font-family:var(--serif);font-style:italic;font-size:26px;color:var(--ink);line-height:1.18;letter-spacing:-.2px;font-weight:600}
+.logo-sub{font-size:12.5px;font-weight:300;color:var(--ink3);margin-top:5px;line-height:1.55;letter-spacing:.1px}
 .logo-area{margin-bottom:26px;padding-bottom:20px;border-bottom:1px solid var(--line)}
-.slbl{font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--ink3);margin-bottom:9px;margin-top:20px;display:flex;align-items:center;gap:8px}
+.slbl{font-family:var(--mono);font-size:9.5px;font-weight:600;letter-spacing:2.2px;text-transform:uppercase;color:var(--ink3);margin-bottom:9px;margin-top:20px;display:flex;align-items:center;gap:8px}
 .slbl:first-of-type{margin-top:0}
 .slbl span{flex:1;height:1px;background:var(--line)}
 
 /* FORM */
 .frow{display:flex;gap:10px;margin-bottom:10px}
 .field{flex:1}
-.field label{display:block;font-size:10.5px;font-weight:700;text-transform:uppercase;color:var(--ink2);margin-bottom:5px;letter-spacing:.4px}
+.field label{display:block;font-size:11px;font-weight:600;text-transform:uppercase;color:var(--ink2);margin-bottom:5px;letter-spacing:.5px}
 .field input[type=number],.field select,.sel-full{width:100%;background:var(--paper);border:1.5px solid var(--line);border-radius:var(--r-sm);color:var(--ink);font-family:var(--mono);font-size:14px;padding:8px 10px;outline:none;transition:border-color .18s,box-shadow .18s;appearance:none}
 .field input:focus,.field select:focus,.sel-full:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(13,115,119,.12)}
 .obj-strip{background:var(--teal-lt);border:1.5px solid var(--teal-mid);border-radius:var(--r-md);padding:11px 13px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:4px}
-.z-lbl{font-family:var(--serif);font-style:italic;font-size:19px;color:var(--teal);white-space:nowrap;margin-right:3px;letter-spacing:-.2px}
+.z-lbl{font-family:var(--serif);font-style:italic;font-size:20px;font-weight:500;color:var(--teal);white-space:nowrap;margin-right:4px;letter-spacing:0}
 .obj-strip input{width:60px;flex:0 0 60px;background:white;border:1.5px solid var(--teal-mid);border-radius:var(--r-sm);color:var(--ink);font-family:var(--mono);font-size:14px;font-weight:500;padding:5px 7px;text-align:center;outline:none;transition:border-color .18s}
 .obj-strip input:focus{border-color:var(--teal)}
-.math-lbl{font-family:var(--serif);font-style:italic;font-size:16px;color:var(--ink2);white-space:nowrap}
+.math-lbl{font-family:var(--serif);font-style:italic;font-size:16px;font-weight:500;color:var(--ink2);white-space:nowrap}
 .math-op{font-size:15px;color:var(--ink3);font-weight:300}
 .con-block{display:flex;flex-direction:column;gap:7px;margin-bottom:7px}
 .con-row{background:var(--paper);border:1.5px solid var(--line);border-radius:var(--r-md);padding:8px 11px;display:flex;align-items:center;gap:5px;flex-wrap:wrap;transition:border-color .18s}
@@ -68,10 +68,10 @@ body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:
 .tgl{display:flex;align-items:center;gap:10px;cursor:pointer;padding:8px 12px;border-radius:var(--r-sm);background:var(--paper);border:1.5px solid var(--line);transition:all .18s;user-select:none}
 .tgl:hover{border-color:var(--teal);background:var(--teal-lt)}
 .tgl input[type=checkbox]{width:16px;height:16px;accent-color:var(--teal);flex-shrink:0}
-.tgl-main{font-size:13px;font-weight:600;color:var(--ink2);letter-spacing:-.1px}
-.tgl-sub{font-size:11px;color:var(--ink3);margin-top:1px}
+.tgl-main{font-size:13.5px;font-weight:600;color:var(--ink2);letter-spacing:0}
+.tgl-sub{font-size:11.5px;font-weight:300;color:var(--ink3);margin-top:1px}
 .action-area{margin-top:18px;display:flex;flex-direction:column;gap:8px}
-.btn-solve{background:var(--teal);color:white;border:none;border-radius:var(--r-md);padding:13px 20px;font-family:var(--sans);font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:9px;transition:background .18s,transform .15s,box-shadow .18s;box-shadow:var(--sh-sm)}
+.btn-solve{background:var(--teal);color:white;border:none;border-radius:var(--r-md);padding:13px 20px;font-family:var(--sans);font-size:14px;font-weight:600;letter-spacing:.2px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:9px;transition:background .18s,transform .15s,box-shadow .18s;box-shadow:var(--sh-sm)}
 .btn-solve:hover{background:#0a5a5d;transform:translateY(-1px);box-shadow:var(--sh-md)}
 .btn-solve:active{transform:translateY(0)}
 .btn-row{display:flex;gap:7px}
@@ -81,7 +81,7 @@ body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:
 .btn-clr:hover{border-color:var(--red);color:var(--red);background:var(--red-lt)}
 
 /* STATUS BAR */
-.statusbar{position:fixed;bottom:0;left:370px;right:0;background:rgba(250,250,248,.96);backdrop-filter:blur(8px);border-top:1px solid var(--line);padding:8px 20px;display:flex;align-items:center;gap:10px;z-index:100;font-family:var(--mono);font-size:11px;color:var(--ink3)}
+.statusbar{position:fixed;bottom:0;left:370px;right:0;background:rgba(250,250,248,.96);backdrop-filter:blur(8px);border-top:1px solid var(--line);padding:8px 20px;display:flex;align-items:center;gap:10px;z-index:100;font-family:var(--mono);font-size:11.5px;color:var(--ink3)}
 .sdot{width:7px;height:7px;border-radius:50%;background:var(--ink3);flex-shrink:0;transition:background .3s}
 .sdot.ok{background:var(--green)}.sdot.run{background:var(--orange);animation:blink .7s infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
@@ -97,8 +97,8 @@ body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:
 .prob-card{background:white;border:1.5px solid var(--line);border-radius:var(--r-lg);padding:18px 22px;margin-bottom:22px;box-shadow:var(--sh-sm)}
 .prob-eyebrow{font-family:var(--mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--ink3);margin-bottom:10px}
 .prob-obj{display:flex;align-items:baseline;gap:10px;margin-bottom:12px;padding-bottom:12px;border-bottom:1.5px solid var(--line)}
-.prob-obj-lbl{font-family:var(--serif);font-style:italic;font-size:16px;color:var(--teal);font-weight:700}
-.prob-obj-expr{font-family:var(--mono);font-size:15px;font-weight:600}
+.prob-obj-lbl{font-family:var(--serif);font-style:italic;font-size:17px;color:var(--teal);font-weight:600}
+.prob-obj-expr{font-family:var(--mono);font-size:14.5px;font-weight:500;letter-spacing:-.2px}
 .prob-con-lbl{font-family:var(--sans);font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
 .prob-con-row{display:flex;align-items:baseline;gap:8px;padding:4px 0;border-bottom:1px dashed var(--line);font-size:13px}
 .prob-con-row:last-child{border-bottom:none}
@@ -133,8 +133,8 @@ body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:
 .t-after .step-badge{background:#2255cc;color:white}
 .t-gomory .step-badge{background:#7c3aed;color:white}
 .step-titles{flex:1;min-width:0}
-.step-title{font-size:13.5px;font-weight:700;color:var(--ink);line-height:1.3;letter-spacing:-.1px}
-.step-sub{font-size:11.5px;font-weight:400;color:var(--ink3);margin-top:2px}
+.step-title{font-size:14px;font-weight:600;color:var(--ink);line-height:1.3;letter-spacing:0}
+.step-sub{font-size:12px;font-weight:300;color:var(--ink3);margin-top:2px;letter-spacing:.1px}
 .step-pill{font-family:var(--mono);font-size:8.5px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;padding:3px 9px;border-radius:20px;flex-shrink:0}
 .t-init .step-pill{background:var(--paper3);color:var(--ink2)}
 .t-primal .step-pill{background:var(--purple-lt);color:var(--purple);border:1px solid #b8a8e8}
@@ -145,7 +145,7 @@ body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:
 .step-body{padding:16px 18px}
 
 /* INFO BOXES */
-.info-box{border-radius:var(--r-md);padding:12px 15px;margin-bottom:14px;font-size:13px;line-height:1.8;color:var(--ink2);border-left:4px solid}
+.info-box{border-radius:var(--r-md);padding:12px 15px;margin-bottom:14px;font-size:13.5px;line-height:1.75;color:var(--ink2);border-left:4px solid}
 .info-box strong{font-weight:700;color:var(--ink)}
 .info-box code{font-family:var(--mono);font-size:12px;background:rgba(0,0,0,.05);padding:1px 6px;border-radius:3px}
 .ib-init{background:var(--teal-lt);border-color:var(--teal)}
@@ -165,7 +165,7 @@ body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:
 .pchip.c-leave .pchip-dot{background:var(--orange)}
 .pchip.c-pivot .pchip-dot{background:var(--teal)}
 .pchip-lbl{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--ink3)}
-.pchip-val{font-family:var(--mono);font-size:13px;font-weight:700}
+.pchip-val{font-family:var(--mono);font-size:13.5px;font-weight:600}
 .pchip.c-enter .pchip-val{color:var(--purple)}
 .pchip.c-leave .pchip-val{color:var(--orange)}
 .pchip.c-pivot .pchip-val{color:var(--teal)}
@@ -174,17 +174,17 @@ body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:
 .ratio-wrap{margin-top:10px;padding-top:10px;border-top:1px dashed var(--line)}
 .ratio-lbl{font-family:var(--mono);font-size:9.5px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink3);margin-bottom:8px}
 table.rtbl{border-collapse:collapse;font-family:var(--mono);font-size:12px}
-table.rtbl th{background:var(--ink2);color:rgba(255,255,255,.85);padding:5px 12px;text-align:center;font-size:10px;font-weight:500;letter-spacing:.5px;border-right:1px solid rgba(255,255,255,.12)}
+table.rtbl th{background:var(--ink2);color:rgba(255,255,255,.85);padding:5px 12px;text-align:center;font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:.5px;border-right:1px solid rgba(255,255,255,.12)}
 table.rtbl th:last-child{border-right:none}
-table.rtbl td{padding:5px 12px;text-align:center;border:1px solid var(--line);color:var(--ink2)}
+table.rtbl td{padding:5px 12px;text-align:center;border:1px solid var(--line);color:var(--ink2);font-family:var(--mono);font-size:12.5px}
 table.rtbl tr.r-min td{background:var(--gold-lt);color:var(--gold);font-weight:700}
 .r-pick{color:var(--orange);font-weight:700;font-size:11px}
 
 /* SIMPLEX TABLE */
 .tbl-scroll{overflow-x:auto;border-radius:var(--r-md);border:1.5px solid var(--line);margin-top:4px}
-table.stab{border-collapse:collapse;min-width:100%;font-family:var(--mono);font-size:13px}
+table.stab{border-collapse:collapse;min-width:100%;font-family:var(--mono);font-size:13.5px}
 table.stab thead tr{background:var(--ink)}
-table.stab thead th{padding:9px 14px;text-align:center;color:rgba(255,255,255,.82);font-size:10.5px;font-weight:600;letter-spacing:.8px;white-space:nowrap;border-right:1px solid rgba(255,255,255,.1)}
+table.stab thead th{padding:9px 14px;text-align:center;color:rgba(255,255,255,.85);font-size:11px;font-weight:600;letter-spacing:.6px;white-space:nowrap;border-right:1px solid rgba(255,255,255,.1)}
 table.stab thead th:first-child{text-align:left;min-width:78px}
 table.stab thead th:last-child{border-right:none;background:rgba(13,115,119,.35)}
 table.stab thead th.h-enter{background:rgba(80,64,160,.6)!important;color:white!important}
@@ -222,10 +222,10 @@ td.c-pivot::after{content:'↗';position:absolute;top:1px;right:3px;font-size:8p
 td.c-rhs{background:rgba(13,115,119,.05)!important;font-weight:600!important}
 td.c-rhs.c-leave{background:#fff0e8!important}
 
-/* OBJ ROW (c_j - z_j) */
+/* OBJ ROW (c_j) */
 tr.obj-row{border-top:2.5px double var(--line)!important}
 tr.obj-row td{background:#f7f6f2!important;color:var(--ink3)!important;font-weight:500!important;font-style:italic}
-tr.obj-row td:first-child{font-style:normal;font-weight:700!important;color:var(--ink)!important;font-family:var(--serif);font-size:13.5px}
+tr.obj-row td:first-child{font-style:italic;font-weight:600!important;color:var(--ink)!important;font-family:var(--serif);font-size:14px}
 /* Z value cell */
 td.z-val{background:#e6f3ec!important;color:var(--green)!important;font-weight:700!important;font-style:normal!important}
 /* Basis vars: cj-zj = 0 */
@@ -246,14 +246,14 @@ td.cj-neg{color:#aaa!important;font-style:italic}
 .result-head{display:flex;align-items:center;gap:10px;margin-bottom:14px}
 .result-icon{width:32px;height:32px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;color:white;font-size:15px;flex-shrink:0}
 .result-panel.is-int .result-icon{background:#7c3aed}
-.result-title{font-family:var(--serif);font-style:italic;font-size:19px;color:var(--ink)}
+.result-title{font-family:var(--serif);font-style:italic;font-size:19px;font-weight:500;color:var(--ink);letter-spacing:-.1px}
 .result-cards{display:flex;flex-wrap:wrap;gap:9px}
 .rc{background:white;border:1.5px solid rgba(0,0,0,.08);border-radius:var(--r-md);padding:11px 16px;min-width:100px;box-shadow:var(--sh-sm)}
 .rc.z-rc{border-color:var(--green);min-width:130px}
 .result-panel.is-int .rc.z-rc{border-color:#7c3aed}
-.rc-lbl{font-family:var(--mono);font-size:9.5px;font-weight:700;color:var(--ink3);letter-spacing:1.2px;text-transform:uppercase;margin-bottom:4px}
-.rc-val{font-family:var(--mono);font-size:22px;font-weight:700;color:var(--green);line-height:1;letter-spacing:-.5px}
-.rc.z-rc .rc-val{font-size:27px;letter-spacing:-1px}
+.rc-lbl{font-family:var(--mono);font-size:9.5px;font-weight:600;color:var(--ink3);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px}
+.rc-val{font-family:var(--mono);font-size:22px;font-weight:600;color:var(--green);line-height:1;letter-spacing:-.3px}
+.rc.z-rc .rc-val{font-size:26px;letter-spacing:-.5px}
 .result-panel.is-int .rc-val{color:#7c3aed}
 
 /* GOMORY */
@@ -269,6 +269,30 @@ td.cj-neg{color:#aaa!important;font-style:italic}
 .alert-box .aico{font-size:15px;flex-shrink:0}
 .a-warn{background:var(--red-lt);border:1.5px solid #f0a090;color:var(--red)}
 .a-ok{background:var(--green-lt);border:1.5px solid #90c8a8;color:var(--green)}
+
+/* MANUAL STEP CONTROLS */
+.manual-ctrl{
+  background:white;border:2px solid var(--teal);border-radius:var(--r-lg);
+  padding:18px 20px;margin-top:18px;box-shadow:0 4px 16px rgba(13,115,119,.12);
+}
+.mc-title{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--teal);margin-bottom:10px}
+.mc-hint{font-size:13px;color:var(--ink2);margin-bottom:14px;line-height:1.65;padding:9px 13px;background:var(--teal-lt);border-radius:var(--r-sm);border-left:3px solid var(--teal)}
+.mc-row{display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:10px}
+.mc-field{display:flex;flex-direction:column;gap:5px;flex:1;min-width:160px}
+.mc-field label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--ink3)}
+.mc-field select{font-family:var(--mono);font-size:13px;padding:8px 10px;background:var(--paper);border:1.5px solid var(--line);border-radius:var(--r-sm);outline:none;color:var(--ink);cursor:pointer}
+.mc-field select:focus{border-color:var(--teal)}
+.mc-btn{padding:9px 18px;border:none;border-radius:var(--r-sm);font-family:var(--sans);font-size:13px;font-weight:700;cursor:pointer;transition:all .18s;white-space:nowrap;align-self:flex-end}
+.mc-btn:not(.mc-auto):not(.mc-fin):not(.mc-ok){background:var(--teal);color:white}
+.mc-btn:not(.mc-auto):not(.mc-fin):not(.mc-ok):hover{background:#0a5a5d;transform:translateY(-1px)}
+.mc-btn.mc-ok{background:var(--green);color:white}
+.mc-btn.mc-ok:hover{background:#165c34}
+.mc-auto-row{display:flex;gap:8px;margin-top:10px;padding-top:10px;border-top:1px dashed var(--line)}
+.mc-btn.mc-auto{background:var(--paper2);color:var(--ink2);border:1.5px solid var(--line);font-size:12px}
+.mc-btn.mc-auto:hover{background:var(--teal-lt);border-color:var(--teal);color:var(--teal)}
+.mc-btn.mc-fin{background:var(--paper2);color:var(--ink3);border:1.5px solid var(--line);font-size:12px}
+.mc-btn.mc-fin:hover{background:#fef0e8;border-color:var(--orange);color:var(--orange)}
+.ratio-preview{margin-top:8px}
 </style>
 </head>
 <body>
@@ -300,13 +324,17 @@ td.cj-neg{color:#aaa!important;font-style:italic}
   <div class="nn-note" id="nnlbl">x₁, x₂ ≥ 0</div>
   <div class="slbl">Tùy chọn <span></span></div>
   <div class="toggle-list">
-    <label class="tgl"><input type="checkbox" id="sfrac" checked><div><div class="tgl-main">Hiển thị phân số chính xác</div><div class="tgl-sub">Kết quả dạng p/q thay vì số thập phân</div></div></label>
+    <label class="tgl" style="opacity:.6;pointer-events:none"><input type="checkbox" id="sfrac" checked disabled><div><div class="tgl-main">Hiển thị phân số chính xác</div><div class="tgl-sub">Kết quả luôn hiển thị dạng p/q</div></div></label>
     <label class="tgl"><input type="checkbox" id="sint"><div><div class="tgl-main">Nghiệm nguyên (Gomory)</div><div class="tgl-sub">Chạy thuật toán cắt sau khi có nghiệm LP</div></div></label>
   </div>
   <div class="action-area">
     <button class="btn-solve" onclick="solve()">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-      Giải bài toán
+      Giải tự động
+    </button>
+    <button class="btn-solve" onclick="solveManual()" style="background:var(--purple);margin-top:-2px">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+      Giải thủ công (tự chọn pivot)
     </button>
     <div class="btn-row">
       <button class="btn-ex" onclick="ex(1)">Ví dụ 1 (Max ≤)</button>
@@ -330,7 +358,9 @@ td.cj-neg{color:#aaa!important;font-style:italic}
 <div class="statusbar"><div class="sdot" id="sdot"></div><span id="stxt">Sẵn sàng</span></div>
 
 <script>
-/* ═══ RATIONAL ARITHMETIC ═══ */
+/* ═══════════════════════════════════════════════════
+   RATIONAL ARITHMETIC  exact fractions p/q
+   ═══════════════════════════════════════════════════ */
 function igcd(a,b){a=Math.abs(a);b=Math.abs(b);while(b){const t=b;b=a%b;a=t}return a||1}
 class Q{
   constructor(p,q){
@@ -352,6 +382,7 @@ class Q{
   lt(b){return this.p*b.q<b.p*this.q}
   lte(b){return this.p*b.q<=b.p*this.q}
   gt(b){return this.p*b.q>b.p*this.q}
+  gte(b){return this.p*b.q>=b.p*this.q}
   isZero(){return this.p===0}
   val(){return this.p/this.q}
   clone(){return new Q(this.p,this.q)}
@@ -359,26 +390,25 @@ class Q{
   fracPart(){return new Q(this.p-this.floorInt()*this.q,this.q)}
   isInteger(){return this.p%this.q===0}
   str(){return this.isInteger()?String(this.floorInt()):this.p+'/'+this.q}
-  // Colored span for data cells
-  html(frac){
+  html(){
     const v=this.val();
     const cls=Math.abs(v)<1e-9?'vzer':v>0?'vpos':'vneg';
-    return`<span class="${cls}">${this._fmt(frac)}</span>`
+    return`<span class="${cls}">${this._fmt()}</span>`
   }
-  // Plain text (no color span) — used in obj row and result panel
-  plain(frac){return this._fmt(frac)}
-  _fmt(frac){
+  plain(){return this._fmt()}
+  _fmt(){
     const v=this.val();
-    if(!frac){const r=Math.round(v*1e5)/1e5;return Math.abs(r)<1e-9?'0':String(r)}
     if(this.isInteger())return String(this.floorInt());
-    const s=this.p<0?'−':'';const a=Math.abs(this.p);
-    return`<sup>${s}${a}</sup>/<sub>${this.q}</sub>`
+    const s=this.p<0?'&#8722;':'';const a=Math.abs(this.p);
+    return`<sup>${s}${a}</sup>&frasl;<sub>${this.q}</sub>`
   }
 }
 const ZERO=new Q(0),ONE=new Q(1);
 function q(p,d){return d!==undefined?new Q(p,d):new Q(p)}
 
-/* ═══ FORM BUILDER ═══ */
+/* ═══════════════════════════════════════════════════
+   FORM BUILDER
+   ═══════════════════════════════════════════════════ */
 function buildForm(){
   const n=+document.getElementById('nv').value||2;
   const m=+document.getElementById('nc').value||2;
@@ -404,7 +434,7 @@ function buildForm(){
       const lbl=document.createElement('span');lbl.className='math-lbl';lbl.innerHTML=`x<sub>${j+1}</sub>`;row.appendChild(lbl);
     }
     const sel=document.createElement('select');
-    ['≤','≥','='].forEach(v=>{const o=document.createElement('option');o.value=o.textContent=v;sel.appendChild(o)});
+    ['&#8804;','&#8805;','='].forEach(v=>{const o=document.createElement('option');o.value=['≤','≥','='][['&#8804;','&#8805;','='].indexOf(v)];o.innerHTML=v;sel.appendChild(o)});
     sel.value=pR[i]?.t||'≤';row.appendChild(sel);
     const rhs=document.createElement('input');rhs.type='number';rhs.className='rb con-rhs';rhs.placeholder='0';rhs.step='any';
     if(pR[i]?.b)rhs.value=pR[i].b;row.appendChild(rhs);
@@ -413,12 +443,14 @@ function buildForm(){
   document.getElementById('nnlbl').innerHTML=Array.from({length:n},(_,i)=>`x<sub>${i+1}</sub>`).join(', ')+' ≥ 0';
 }
 
-/* ═══ READ INPUT ═══ */
+/* ═══════════════════════════════════════════════════
+   READ INPUT
+   ═══════════════════════════════════════════════════ */
 function readInput(){
   const n=+document.getElementById('nv').value;
   const m=+document.getElementById('nc').value;
   const ot=document.getElementById('ot').value;
-  const sfrac=document.getElementById('sfrac').checked;
+  const sfrac=true;
   const sint=document.getElementById('sint').checked;
   const c=[];for(let j=0;j<n;j++){const v=parseFloat(document.getElementById('c'+j).value);c.push(isNaN(v)?0:v)}
   const A=[],b=[],types=[];
@@ -430,12 +462,20 @@ function readInput(){
   return{n,m,ot,sfrac,sint,c,A,b,types};
 }
 
-/* ═══ STANDARD FORM ═══ */
+/* ═══════════════════════════════════════════════════
+   STANDARD FORM
+   MAX problem: obj[j] = c[j]  (maximize directly)
+   MIN problem: obj[j] = -c[j] (convert to max of -Z, display c[j] original)
+   Slack s: coef +1 for ≤
+   Surplus e: coef -1 for ≥, plus artificial a: coef +1
+   Equality =: artificial a: coef +1
+   ═══════════════════════════════════════════════════ */
 function buildSF(inp){
   const{n,m,ot,c,A,b,types}=inp;
   const Aq=A.map(r=>r.map(v=>q(v)));
   const bq=b.map(v=>q(v));
   const tw=[...types];
+  // Ensure RHS >= 0
   for(let i=0;i<m;i++){
     if(bq[i].val()<-1e-12){
       Aq[i]=Aq[i].map(v=>v.neg());bq[i]=bq[i].neg();
@@ -444,14 +484,17 @@ function buildSF(inp){
   }
   const vn=[],vt=[];
   for(let j=0;j<n;j++){vn[j]=`x${j+1}`;vt[j]='x'}
-  let xi=n,sc=0,ec=0,ac=0;
+  let xi=n,sc=0,ec2=0,ac=0;
   const slk=[],art=[],artSet=new Set();
   for(let i=0;i<m;i++){
-    if(tw[i]==='≤'){vn[xi]=`s${++sc}`;vt[xi]='s';slk.push(xi);art.push(-1);xi++}
-    else if(tw[i]==='≥'){
-      vn[xi]=`e${++ec}`;vt[xi]='e';slk.push(xi);xi++;
+    if(tw[i]==='≤'){
+      vn[xi]=`s${++sc}`;vt[xi]='s';slk.push(xi);art.push(-1);xi++;
+    }else if(tw[i]==='≥'){
+      vn[xi]=`e${++ec2}`;vt[xi]='e';slk.push(xi);xi++;
       vn[xi]=`a${++ac}`;vt[xi]='art';art.push(xi);artSet.add(xi);xi++;
-    }else{slk.push(-1);vn[xi]=`a${++ac}`;vt[xi]='art';art.push(xi);artSet.add(xi);xi++}
+    }else{
+      slk.push(-1);vn[xi]=`a${++ac}`;vt[xi]='art';art.push(xi);artSet.add(xi);xi++;
+    }
   }
   const NV=xi;
   const rows=[],basis=[];
@@ -464,19 +507,23 @@ function buildSF(inp){
     rows.push({coefs,rhs:bq[i].clone()});
     basis.push(ai>=0?ai:si);
   }
+  // Internal obj (for optimization): max → c[j], min → -c[j]
   const obj=Array.from({length:NV},()=>ZERO.clone());
   for(let j=0;j<n;j++)obj[j]=ot==='max'?q(c[j]):q(-c[j]);
-  for(let i=0;i<m;i++)if(art[i]>=0)obj[art[i]]=q(-1e7);
-  return{vn,vt,rows,basis,obj,NV,m,n,artSet};
+  const BM=1e7;
+  for(let i=0;i<m;i++)if(art[i]>=0)obj[art[i]]=q(-BM);
+  // Display c[j]: always original values (positive for MIN)
+  const origC=Array.from({length:NV},()=>ZERO.clone());
+  for(let j=0;j<n;j++)origC[j]=q(c[j]);
+  return{vn,vt,rows,basis,obj,origC,NV,m,n,artSet,ot};
 }
 
 function makeTab(sf){
-  const{vn,rows,basis,obj,NV,m,artSet}=sf;
+  const{vn,rows,basis,obj,origC,NV,m,artSet}=sf;
   const tab=rows.map(r=>r.coefs.map(v=>v.clone()));
   const rhs=rows.map(r=>r.rhs.clone());
   const o=obj.map(v=>v.clone());
   let zv=ZERO.clone();
-  // Row-reduce objective for initial basis
   for(let i=0;i<m;i++){
     const bv=basis[i];
     if(!o[bv].isZero()){
@@ -485,25 +532,39 @@ function makeTab(sf){
       zv=zv.sub(coef.mul(rhs[i]));
     }
   }
-  return{tab,rhs,obj:o,zv,basis:[...basis],vn:[...vn],m,NV,artSet};
+  return{tab,rhs,obj:o,origC:[...origC],zv,basis:[...basis],vn:[...vn],m,NV,artSet};
 }
 
 function cloneT(T){
-  return{tab:T.tab.map(r=>r.map(v=>v.clone())),rhs:T.rhs.map(v=>v.clone()),obj:T.obj.map(v=>v.clone()),zv:T.zv.clone(),basis:[...T.basis],vn:[...T.vn],m:T.m,NV:T.NV,artSet:new Set(T.artSet)};
+  return{
+    tab:T.tab.map(r=>r.map(v=>v.clone())),
+    rhs:T.rhs.map(v=>v.clone()),
+    obj:T.obj.map(v=>v.clone()),
+    origC:[...T.origC],
+    zv:T.zv.clone(),
+    basis:[...T.basis],
+    vn:[...T.vn],
+    m:T.m,NV:T.NV,artSet:new Set(T.artSet)
+  };
 }
 
-/* ═══ PIVOT ═══ */
+/* ═══════════════════════════════════════════════════
+   PIVOT OPERATION (Gauss elimination on one column)
+   ═══════════════════════════════════════════════════ */
 function doPivot(T,lr,ec){
-  const piv=T.tab[lr][ec];if(piv.isZero())throw'Zero pivot';
+  const piv=T.tab[lr][ec];if(piv.isZero())throw'Phần tử chốt = 0';
   const pi=ONE.div(piv);
+  // Normalize pivot row
   for(let j=0;j<T.NV;j++)T.tab[lr][j]=T.tab[lr][j].mul(pi);
   T.rhs[lr]=T.rhs[lr].mul(pi);
+  // Eliminate column ec from all other rows
   for(let i=0;i<T.m;i++){
     if(i===lr)continue;
     const f=T.tab[i][ec];if(f.isZero())continue;
     for(let j=0;j<T.NV;j++)T.tab[i][j]=T.tab[i][j].sub(f.mul(T.tab[lr][j]));
     T.rhs[i]=T.rhs[i].sub(f.mul(T.rhs[lr]));
   }
+  // Update objective row
   const fo=T.obj[ec];
   if(!fo.isZero()){
     for(let j=0;j<T.NV;j++)T.obj[j]=T.obj[j].sub(fo.mul(T.tab[lr][j]));
@@ -512,100 +573,349 @@ function doPivot(T,lr,ec){
   T.basis[lr]=ec;
 }
 
-function findEnter(T){let best=-1,bv=q(1e-9);for(let j=0;j<T.NV;j++)if(!T.basis.includes(j)&&T.obj[j].gt(bv)){bv=T.obj[j].clone();best=j}return best}
-function findLeave(T,ec){let best=-1,br=null;for(let i=0;i<T.m;i++){const a=T.tab[i][ec];if(a.gt(q(1e-12))){const r=T.rhs[i].div(a);if(br===null||r.lt(br)||(r.eq(br)&&T.basis[i]<T.basis[best])){br=r;best=i}}}return best}
+/* ═══════════════════════════════════════════════════
+   AUTO PIVOT SELECTION
+   MAX: enter = most positive c_j (col), leave = min ratio b/a (row)
+   MIN (converted to max -Z): same logic on internal obj
+   Dual: leave = most negative b_i, enter = min ratio c_j/|a_ij|
+   ═══════════════════════════════════════════════════ */
+function findEnter(T){
+  let best=-1,bv=q(1e-9);
+  for(let j=0;j<T.NV;j++)
+    if(!T.basis.includes(j)&&T.obj[j].gt(bv)){bv=T.obj[j].clone();best=j}
+  return best;
+}
+function findLeave(T,ec){
+  let best=-1,br=null;
+  for(let i=0;i<T.m;i++){
+    const a=T.tab[i][ec];
+    if(a.gt(q(1e-12))){
+      const r=T.rhs[i].div(a);
+      if(br===null||r.lt(br)||(r.eq(br)&&T.basis[i]<T.basis[best])){br=r;best=i}
+    }
+  }
+  return best;
+}
 function findDual(T){
   let lr=-1,mn=q(-1e-9);
   for(let i=0;i<T.m;i++)if(T.rhs[i].lt(mn)){mn=T.rhs[i].clone();lr=i}
   if(lr===-1)return null;
   let ec=-1,mr=null;
-  for(let j=0;j<T.NV;j++){const a=T.tab[lr][j];if(a.lt(q(-1e-12))){const r=T.obj[j].div(a);if(mr===null||r.lt(mr)){mr=r;ec=j}}}
+  for(let j=0;j<T.NV;j++){
+    const a=T.tab[lr][j];
+    if(a.lt(q(-1e-12))){
+      const r=T.obj[j].div(a);
+      if(mr===null||r.lt(mr)){mr=r;ec=j}
+    }
+  }
   if(ec===-1)return null;
   return{lr,ec};
 }
 
-/* ═══ MAIN SOLVER ═══ */
+/* ═══════════════════════════════════════════════════
+   MANUAL STEP STATE
+   ═══════════════════════════════════════════════════ */
+let manualState=null; // {T, inp, step, mode:'primal'|'dual'|'gomory', origN}
+
+/* ═══════════════════════════════════════════════════
+   MAIN SOLVER  (auto mode)
+   ═══════════════════════════════════════════════════ */
 function solve(){
   const inp=readInput();
   setStatus('run','Đang giải…');
   document.getElementById('placeholder').style.display='none';
   document.getElementById('sol').innerHTML='';
+  manualState=null;
   let html='';
   try{html=runSolver(inp)}catch(e){html=mkAlert('warn','Lỗi: '+e);console.error(e)}
   document.getElementById('sol').innerHTML=html;
   const good=document.getElementById('sol').querySelector('.result-panel');
   setStatus(good?'ok':'','Hoàn tất');
 }
+
+/* ─── Manual solve ─── */
+function solveManual(){
+  const inp=readInput();
+  setStatus('run','Chế độ thủ công…');
+  document.getElementById('placeholder').style.display='none';
+  document.getElementById('sol').innerHTML='';
+  manualState=null;
+  const sf=buildSF(inp);
+  const T=makeTab(sf);
+  manualState={T,inp,step:0,origN:inp.n};
+  let html=buildProbHeader(inp,sf);
+  html+=renderStep(cloneT(T),-1,-1,0,'Bảng đơn hình khởi đầu','init',inp.ot);
+  html+=buildManualControls(T,inp.ot,0);
+  document.getElementById('sol').innerHTML=html;
+  setStatus('run','Chọn biến vào / biến ra');
+}
+
+function buildManualControls(T,ot,step){
+  if(!T)return'';
+  // Determine current mode
+  const dualFeas=T.obj.every(v=>v.lte(q(1e-9)));
+  const hasNegRhs=T.rhs.some(v=>v.lt(q(-1e-9)));
+  const ec_auto=findEnter(T);
+  const isOptimal=(ec_auto===-1&&!hasNegRhs);
+  if(isOptimal){
+    return`<div class="manual-ctrl">
+      <div class="mc-title">✓ Bảng tối ưu — không cần thêm bước</div>
+      <button class="mc-btn mc-ok" onclick="manualFinish()">Xem kết quả</button>
+    </div>`;
+  }
+  // Build column options (entering candidates)
+  let colOpts='<option value="">-- Chọn biến vào --</option>';
+  for(let j=0;j<T.NV;j++){
+    if(!T.basis.includes(j)){
+      const v=T.obj[j].val();
+      const cjDisp=ot==='min'?T.obj[j].neg():T.obj[j];
+      const mark=v>1e-9?' ✓':'';
+      colOpts+=`<option value="${j}">${T.vn[j]} (c<sub>j</sub>=${cjDisp.plain()}${mark})</option>`;
+    }
+  }
+  // Build row options
+  let rowOpts='<option value="">-- Chọn biến ra --</option>';
+  for(let i=0;i<T.m;i++){
+    rowOpts+=`<option value="${i}">${T.vn[T.basis[i]]} (b=${T.rhs[i].plain()})</option>`;
+  }
+  const hint=dualFeas&&hasNegRhs?'Đang áp dụng <strong>đơn hình đối ngẫu</strong>: chọn hàng có b &lt; 0 làm biến ra, sau đó chọn cột vào.':
+    `Đơn hình thường: chọn cột có c<sub>j</sub> dương làm biến vào, kiểm tra tỉ số θ chọn biến ra.`;
+  return`<div class="manual-ctrl" id="mc">
+    <div class="mc-title">Bước ${step+1} — Chọn phép xoay</div>
+    <div class="mc-hint">${hint}</div>
+    <div class="mc-row">
+      <div class="mc-field">
+        <label>Biến vào (cột)</label>
+        <select id="mc-col" onchange="updateRatios()">${colOpts}</select>
+      </div>
+      <div class="mc-field">
+        <label>Biến ra (hàng)</label>
+        <select id="mc-row">${rowOpts}</select>
+      </div>
+      <button class="mc-btn" onclick="manualPivot()">Thực hiện xoay →</button>
+    </div>
+    <div id="ratio-preview" class="ratio-preview"></div>
+    <div class="mc-auto-row">
+      <button class="mc-btn mc-auto" onclick="manualAutoStep()">Tự động bước này</button>
+      <button class="mc-btn mc-fin" onclick="manualAutoAll()">Tự động tất cả</button>
+    </div>
+  </div>`;
+}
+
+function updateRatios(){
+  if(!manualState)return;
+  const T=manualState.T;
+  const sel=document.getElementById('mc-col');
+  if(!sel)return;
+  const ec=parseInt(sel.value);
+  if(isNaN(ec))return;
+  // Compute ratios
+  let rows=[];
+  for(let i=0;i<T.m;i++){
+    const a=T.tab[i][ec];
+    if(a.gt(q(1e-12))){
+      const r=T.rhs[i].div(a);
+      rows.push({i,bv:T.vn[T.basis[i]],b:T.rhs[i].plain(),a:a.plain(),r:r.plain()});
+    }
+  }
+  const prev=document.getElementById('ratio-preview');
+  if(!prev)return;
+  if(!rows.length){prev.innerHTML=`<span style="color:var(--red)">Không có hàng nào có a<sub>ij</sub> > 0 → hàm mục tiêu không bị chặn!</span>`;return}
+  const minR=rows.reduce((m,r)=>m===null?r.r:(r.r<m?r.r:m),null);
+  let h=`<div class="ratio-lbl">Tỉ số θ = b / a<sub>i,col</sub>:</div>
+  <table class="rtbl"><thead><tr><th>Hàng</th><th>Cơ sở</th><th>b</th><th>a<sub>ij</sub></th><th>θ</th><th></th></tr></thead><tbody>`;
+  rows.forEach(r=>{
+    const isMin=r.r===minR;
+    h+=`<tr class="${isMin?'r-min':''}"><td>${r.i+1}</td><td>${r.bv}</td><td>${r.b}</td><td>${r.a}</td><td><strong>${r.r}</strong></td><td>${isMin?'<span class="r-pick">← Min</span>':''}</td></tr>`;
+  });
+  h+=`</tbody></table>`;
+  prev.innerHTML=h;
+  // Auto-select min ratio row
+  const bestRow=rows.find(r=>r.r===minR);
+  const rowSel=document.getElementById('mc-row');
+  if(rowSel&&bestRow)rowSel.value=String(bestRow.i);
+}
+
+function manualPivot(){
+  if(!manualState)return;
+  const ec=parseInt(document.getElementById('mc-col')?.value);
+  const lr=parseInt(document.getElementById('mc-row')?.value);
+  if(isNaN(ec)||isNaN(lr)){alert('Vui lòng chọn cả biến vào và biến ra!');return}
+  // Validate pivot
+  const a=manualState.T.tab[lr][ec];
+  if(a.isZero()||a.val()===0){alert('Phần tử chốt = 0, không thể xoay!');return}
+  _applyManualPivot(ec,lr,'primal');
+}
+
+function manualAutoStep(){
+  if(!manualState)return;
+  const T=manualState.T;
+  const dualFeas=T.obj.every(v=>v.lte(q(1e-9)));
+  const hasNegRhs=T.rhs.some(v=>v.lt(q(-1e-9)));
+  let ec,lr,mode;
+  if(dualFeas&&hasNegRhs){
+    const dp=findDual(T);if(!dp){alert('Bài toán vô nghiệm!');return}
+    ec=dp.ec;lr=dp.lr;mode='dual';
+  }else{
+    ec=findEnter(T);if(ec===-1){manualFinish();return}
+    lr=findLeave(T,ec);if(lr===-1){alert('Bài toán không bị chặn!');return}
+    mode='primal';
+  }
+  _applyManualPivot(ec,lr,mode);
+}
+
+function manualAutoAll(){
+  if(!manualState)return;
+  // Run all remaining steps automatically
+  const T=manualState.T;
+  const inp=manualState.inp;
+  const solDiv=document.getElementById('sol');
+  // Remove manual controls
+  const mc=document.getElementById('mc');if(mc)mc.remove();
+  let html='',status='';
+  for(let it=0;it<200;it++){
+    const dualFeas=T.obj.every(v=>v.lte(q(1e-9)));
+    const hasNegRhs=T.rhs.findIndex(v=>v.lt(q(-1e-9)));
+    if(dualFeas&&hasNegRhs>=0){
+      const dp=findDual(T);if(!dp){status='infeasible';break}
+      const snap=cloneT(T);
+      html+=renderStep(snap,dp.ec,dp.lr,manualState.step++,`Đơn hình đối ngẫu — Bước ${manualState.step-1}`,'dual',inp.ot);
+      doPivot(T,dp.lr,dp.ec);
+      html+=renderStep(cloneT(T),-1,-1,manualState.step++,`Sau phép xoay — Bước ${manualState.step-1}`,'after',inp.ot);
+      continue;
+    }
+    const ec=findEnter(T);if(ec===-1){status='optimal';break}
+    const lr=findLeave(T,ec);if(lr===-1){status='unbounded';break}
+    const snap=cloneT(T);
+    html+=renderStep(snap,ec,lr,manualState.step++,`Đơn hình thường — Bước ${manualState.step-1}`,'primal',inp.ot);
+    doPivot(T,lr,ec);
+    html+=renderStep(cloneT(T),-1,-1,manualState.step++,`Sau phép xoay — Bước ${manualState.step-1}`,'after',inp.ot);
+  }
+  if(status==='optimal'){
+    html+=renderStep(cloneT(T),-1,-1,manualState.step,'Bảng tối ưu cuối cùng','optimal',inp.ot);
+    html+=buildResultPanel(T,inp.n,inp.ot,false);
+  }else if(status==='unbounded'){html+=mkAlert('warn','Bài toán không bị chặn.')}
+  else if(status==='infeasible'){html+=mkAlert('warn','Bài toán vô nghiệm.')}
+  solDiv.insertAdjacentHTML('beforeend',html);
+  manualState=null;
+  setStatus('ok','Hoàn tất (tự động)');
+}
+
+function _applyManualPivot(ec,lr,mode){
+  if(!manualState)return;
+  const T=manualState.T;
+  const inp=manualState.inp;
+  const snap=cloneT(T);
+  manualState.step++;
+  const stepNum=manualState.step;
+  doPivot(T,lr,ec);
+  const solDiv=document.getElementById('sol');
+  // Remove old controls
+  const mc=document.getElementById('mc');if(mc)mc.remove();
+  // Append pivot tableau + result tableau
+  let html=renderStep(snap,ec,lr,stepNum,`${mode==='dual'?'Đơn hình đối ngẫu':'Đơn hình thường'} — Bước ${stepNum}`,mode,inp.ot);
+  manualState.step++;
+  html+=renderStep(cloneT(T),-1,-1,manualState.step,`Sau phép xoay — Bước ${manualState.step}`,'after',inp.ot);
+  // Check done
+  const dualFeas2=T.obj.every(v=>v.lte(q(1e-9)));
+  const hasNeg2=T.rhs.some(v=>v.lt(q(-1e-9)));
+  const nextEnter=findEnter(T);
+  const isOpt=nextEnter===-1&&!hasNeg2;
+  if(isOpt){
+    const stuck=T.basis.some((bv,i)=>T.artSet.has(bv)&&Math.abs(T.rhs[i].val())>1e-8);
+    if(!stuck){
+      html+=renderStep(cloneT(T),-1,-1,manualState.step+1,'Bảng tối ưu cuối cùng','optimal',inp.ot);
+      html+=buildResultPanel(T,inp.n,inp.ot,false);
+      solDiv.insertAdjacentHTML('beforeend',html);
+      manualState=null;
+      setStatus('ok','Hoàn tất ✓');
+      return;
+    }
+  }
+  html+=buildManualControls(T,inp.ot,manualState.step);
+  solDiv.insertAdjacentHTML('beforeend',html);
+  // Scroll to bottom
+  solDiv.lastElementChild?.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function manualFinish(){
+  if(!manualState)return;
+  const T=manualState.T;
+  const inp=manualState.inp;
+  const mc=document.getElementById('mc');if(mc)mc.remove();
+  let html=renderStep(cloneT(T),-1,-1,manualState.step+1,'Bảng tối ưu cuối cùng','optimal',inp.ot);
+  html+=buildResultPanel(T,inp.n,inp.ot,false);
+  document.getElementById('sol').insertAdjacentHTML('beforeend',html);
+  manualState=null;
+  setStatus('ok','Hoàn tất ✓');
+}
+
 function setStatus(t,txt){document.getElementById('sdot').className='sdot'+(t?' '+t:'');document.getElementById('stxt').textContent=txt}
 
+/* ═══════════════════════════════════════════════════
+   AUTO SOLVER
+   ═══════════════════════════════════════════════════ */
 function runSolver(inp){
   const{sfrac,sint,ot,n}=inp;
   let html='';
   const sf=buildSF(inp);
   let T=makeTab(sf);
   let step=0,status='';
-
   html+=buildProbHeader(inp,sf);
-  // Bảng khởi đầu
-  html+=renderStep(cloneT(T),-1,-1,step++,'Bảng đơn hình khởi đầu','init',sfrac,ot);
-
+  html+=renderStep(cloneT(T),-1,-1,step++,'Bảng đơn hình khởi đầu','init',ot);
   for(let it=0;it<200;it++){
     const dualFeas=T.obj.every(v=>v.lte(q(1e-9)));
     const hasNegRhs=T.rhs.findIndex(v=>v.lt(q(-1e-9)));
-
     if(dualFeas&&hasNegRhs>=0){
-      // Dual simplex
       const dp=findDual(T);
       if(!dp){status='infeasible';break}
       const snap=cloneT(T);
-      html+=renderStep(snap,dp.ec,dp.lr,step++,`Đơn hình đối ngẫu — Bước ${step-1}`,'dual',sfrac,ot);
+      html+=renderStep(snap,dp.ec,dp.lr,step++,`Đơn hình đối ngẫu — Bước ${step-1}`,'dual',ot);
       doPivot(T,dp.lr,dp.ec);
-      html+=renderStep(cloneT(T),-1,-1,step++,`Bảng sau phép xoay (đối ngẫu) — Bước ${step-1}`,'after',sfrac,ot);
+      html+=renderStep(cloneT(T),-1,-1,step++,`Sau phép xoay (đối ngẫu) — Bước ${step-1}`,'after',ot);
       continue;
     }
-
     const ec=findEnter(T);
     if(ec===-1){status='optimal';break}
     const lr=findLeave(T,ec);
     if(lr===-1){status='unbounded';break}
-
     const snap=cloneT(T);
-    html+=renderStep(snap,ec,lr,step++,`Đơn hình thường — Bước ${step-1}`,'primal',sfrac,ot);
+    html+=renderStep(snap,ec,lr,step++,`Đơn hình thường — Bước ${step-1}`,'primal',ot);
     doPivot(T,lr,ec);
-    html+=renderStep(cloneT(T),-1,-1,step++,`Bảng sau phép xoay — Bước ${step-1}`,'after',sfrac,ot);
+    html+=renderStep(cloneT(T),-1,-1,step++,`Sau phép xoay — Bước ${step-1}`,'after',ot);
   }
-
   if(status==='optimal'){
     const stuck=T.basis.some((bv,i)=>T.artSet.has(bv)&&Math.abs(T.rhs[i].val())>1e-8);
     if(stuck)return html+mkAlert('warn','Bài toán vô nghiệm: biến nhân tạo còn dương trong cơ sở.');
-    html+=renderStep(cloneT(T),-1,-1,step,'Bảng đơn hình tối ưu cuối cùng','optimal',sfrac,ot);
-    html+=buildResultPanel(T,n,ot,sfrac,false);
+    html+=renderStep(cloneT(T),-1,-1,step,'Bảng đơn hình tối ưu cuối cùng','optimal',ot);
+    html+=buildResultPanel(T,n,ot,false);
     if(sint){
-      html+=`<div class="gom-div"><div class="gom-div-line"></div><div class="gom-div-pill">✦ Cắt Gomory — Nghiệm Nguyên</div><div class="gom-div-line"></div></div>`;
-      html+=runGomory(T,inp,sfrac,ot,n,step);
+      html+=`<div class="gom-div"><div class="gom-div-line"></div><div class="gom-div-pill">&#10022; Cắt Gomory — Nghiệm Nguyên</div><div class="gom-div-line"></div></div>`;
+      html+=runGomory(T,inp,ot,n,step);
     }
-  } else if(status==='unbounded'){
-    html+=mkAlert('warn','Bài toán không bị chặn (Unbounded).');
-  } else if(status==='infeasible'){
-    html+=mkAlert('warn','Bài toán vô nghiệm: không tồn tại miền chấp nhận được.');
-  } else {
-    html+=mkAlert('warn','Vượt giới hạn lặp (200).');
-  }
+  }else if(status==='unbounded'){html+=mkAlert('warn','Bài toán không bị chặn (Unbounded).')}
+  else if(status==='infeasible'){html+=mkAlert('warn','Bài toán vô nghiệm.')}
+  else{html+=mkAlert('warn','Vượt giới hạn lặp (200).')}
   return html;
 }
 
-/* ═══ GOMORY ═══ */
-function runGomory(T,inp,sfrac,ot,origN,startStep){
+/* ═══════════════════════════════════════════════════
+   GOMORY
+   ═══════════════════════════════════════════════════ */
+function runGomory(T,inp,ot,origN,startStep){
   let html='',step=startStep+1;
   const EPS=q(1,1000000),MAX_G=30;
   for(let iter=1;iter<=MAX_G;iter++){
     let fr=-1,mf=EPS.clone();
     for(let i=0;i<T.m;i++){
-      if(T.basis[i]<origN){const fp=T.rhs[i].fracPart();if(fp.gt(EPS)&&fp.lt(new Q(999999,1000000))&&fp.gt(mf)){mf=fp.clone();fr=i}}
+      if(T.basis[i]<origN){
+        const fp=T.rhs[i].fracPart();
+        if(fp.gt(EPS)&&fp.lt(new Q(999999,1000000))&&fp.gt(mf)){mf=fp.clone();fr=i}
+      }
     }
     if(fr===-1){
-      html+=renderStep(cloneT(T),-1,-1,step++,'Tất cả biến gốc là nguyên — Nghiệm nguyên tối ưu','optimal',sfrac,ot);
-      html+=buildResultPanel(T,origN,ot,sfrac,true);
+      html+=renderStep(cloneT(T),-1,-1,step++,'Tất cả biến gốc là nguyên — Nghiệm nguyên tối ưu','optimal',ot);
+      html+=buildResultPanel(T,origN,ot,true);
       html+=mkAlert('ok',`Tìm được nghiệm nguyên tối ưu sau ${iter-1} lần cắt Gomory.`);
       return html;
     }
@@ -613,134 +923,108 @@ function runGomory(T,inp,sfrac,ot,origN,startStep){
     const f0=T.rhs[fr].fracPart();
     const nvi=T.NV,nvn=`g${iter}`;
     T.vn.push(nvn);T.NV++;
-    T.tab.forEach(r=>r.push(ZERO.clone()));T.obj.push(ZERO.clone());
+    T.tab.forEach(r=>r.push(ZERO.clone()));T.obj.push(ZERO.clone());T.origC.push(ZERO.clone());
     const cr=Array.from({length:T.NV},()=>ZERO.clone());
     for(let j=0;j<T.NV-1;j++)cr[j]=T.tab[fr][j].fracPart().neg();
     cr[nvi]=ONE.clone();
     T.tab.push(cr);T.rhs.push(f0.neg());T.basis.push(nvi);T.m++;
     let desc=[];
-    for(let j=0;j<T.NV-1;j++){if(!T.basis.includes(j)){const fp=cr[j].neg();if(fp.gt(EPS))desc.push(`${fp.str()}·${T.vn[j]}`)}}
-
+    for(let j=0;j<T.NV-1;j++){if(!T.basis.includes(j)){const fp=cr[j].neg();if(fp.gt(EPS))desc.push(`${fp.str()}&#183;${T.vn[j]}`)}}
     html+=`<div class="step-card t-gomory"><div class="step-inner">
       <div class="step-head">
         <div class="step-badge">G${iter}</div>
-        <div class="step-titles">
-          <div class="step-title">Thêm điều kiện cắt Gomory #${iter}</div>
-          <div class="step-sub">Từ hàng biến cơ sở <strong>${bvName}</strong> — phần lẻ f₀ = ${f0.str()}</div>
-        </div>
+        <div class="step-titles"><div class="step-title">Thêm điều kiện cắt Gomory #${iter}</div>
+        <div class="step-sub">Từ hàng <strong>${bvName}</strong> — phần lẻ f₀ = ${f0.str()}</div></div>
         <div class="step-pill">Gomory</div>
       </div>
       <div class="step-body">
         <div class="gom-box">
           Biến cơ sở <strong>${bvName}</strong> có giá trị không nguyên → phần lẻ <strong>f₀ = ${f0.str()}</strong><br>
-          Điều kiện Gomory: <code>${desc.join(' + ')||'0'}</code> ≥ <strong>${f0.str()}</strong><br>
-          Thêm biến bù <strong><code>${nvn}</code></strong> vào hàng mới với RHS = <strong>−${f0.str()}</strong> (sẽ dùng đối ngẫu để phục hồi khả thi)
+          Điều kiện cắt: <code>${desc.join(' + ')||'0'}</code> ≥ <strong>${f0.str()}</strong><br>
+          Thêm biến bù <strong><code>${nvn}</code></strong>, hàng mới RHS = <strong>−${f0.str()}</strong>
         </div>
-        <div class="tbl-scroll">${buildTable(cloneT(T),-1,T.m-1,sfrac,ot)}</div>
-      </div>
-    </div></div>`;
-
+        <div class="tbl-scroll">${buildTable(cloneT(T),-1,T.m-1,ot)}</div>
+      </div></div></div>`;
     let di=0;
     while(di++<50){
       const dp=findDual(T);if(!dp)break;
       const snap=cloneT(T);
-      html+=renderStep(snap,dp.ec,dp.lr,step++,`Đối ngẫu (sau G${iter}) — Bước ${step-1}`,'dual',sfrac,ot);
+      html+=renderStep(snap,dp.ec,dp.lr,step++,`Đối ngẫu (sau G${iter}) — Bước ${step-1}`,'dual',ot);
       doPivot(T,dp.lr,dp.ec);
-      html+=renderStep(cloneT(T),-1,-1,step++,`Bảng sau phép xoay (G${iter}) — Bước ${step-1}`,'after',sfrac,ot);
+      html+=renderStep(cloneT(T),-1,-1,step++,`Sau phép xoay (G${iter}) — Bước ${step-1}`,'after',ot);
     }
   }
   html+=mkAlert('warn',`Đạt giới hạn lặp Gomory (${MAX_G}).`);
   return html;
 }
 
-/* ═══ RENDER STEP ═══ */
-function renderStep(snap,ec,lr,idx,title,type,sfrac,ot){
+/* ═══════════════════════════════════════════════════
+   RENDER STEP
+   ═══════════════════════════════════════════════════ */
+function renderStep(snap,ec,lr,idx,title,type,ot){
   const bMap={init:'★',optimal:'✓',after:'→'};
   const badge=bMap[type]||String(idx);
   const pMap={init:'Khởi đầu',primal:'Đơn Hình',dual:'Đối Ngẫu',optimal:'Tối Ưu',after:'Sau Xoay',gomory:'Gomory'};
 
   let info='';
-
   if(type==='init'){
     const bNames=snap.basis.map(b=>snap.vn[b]).join(', ');
     const arts=snap.basis.filter(b=>snap.artSet.has(b)).map(b=>snap.vn[b]);
     info=`<div class="info-box ib-init">
       <strong>Cơ sở ban đầu:</strong> { ${bNames} }<br>
-      ${arts.length?`⚠ Có biến nhân tạo: <strong>${arts.join(', ')}</strong> — xử lý bằng Big-M = 10<sup>7</sup><br>`:''}
-      Xét hàng <strong>c<sub>j</sub> − z<sub>j</sub></strong>: chọn cột có giá trị <em>dương lớn nhất</em> làm biến vào. Nếu không có → tối ưu.
+      ${arts.length?`&#9888; Biến nhân tạo: <strong>${arts.join(', ')}</strong> — dùng Big-M = 10<sup>7</sup><br>`:''}
+      Xét hàng <strong>c<sub>j</sub></strong>: chọn cột có giá trị <em>lớn nhất dương</em> làm biến vào.
     </div>`;
-
-  } else if(type==='optimal'){
+  }else if(type==='optimal'){
     info=`<div class="info-box ib-opt">
-      ✓ <strong>Điều kiện tối ưu đạt được:</strong> Tất cả c<sub>j</sub> − z<sub>j</sub> ≤ 0 với mọi biến không cơ sở.<br>
-      Không còn hướng cải thiện hàm mục tiêu.
+      ✓ <strong>Điều kiện tối ưu:</strong> Tất cả c<sub>j</sub> ≤ 0 với mọi biến không cơ sở → <strong>Nghiệm tối ưu đạt được.</strong>
     </div>`;
-
-  } else if(type==='after'){
+  }else if(type==='after'){
     const bNames=snap.basis.map(b=>snap.vn[b]).join(', ');
     let zv=snap.zv.clone();if(ot==='min')zv=zv.neg();
     info=`<div class="info-box ib-after">
-      <strong>Cơ sở mới:</strong> { ${bNames} } &nbsp;·&nbsp; <strong>Z = ${zv.plain(sfrac)}</strong><br>
-      Kiểm tra lại hàng c<sub>j</sub> − z<sub>j</sub> để xác định bước tiếp theo.
+      <strong>Cơ sở mới:</strong> { ${bNames} } &nbsp;·&nbsp; <strong>Z = ${zv.plain()}</strong>
     </div>`;
-
-  } else if((type==='primal'||type==='dual')&&ec>=0&&lr>=0){
+  }else if((type==='primal'||type==='dual')&&ec>=0&&lr>=0){
     const pivVal=snap.tab[lr][ec].str();
-
-    // Entering reason
     let enterReason='';
     if(type==='primal'){
+      // Hiển thị c_j đã cập nhật: MAX dùng obj[j], MIN đổi dấu obj[j]
+      const _cjDisp=j=>ot==='min'?snap.obj[j].neg():snap.obj[j];
       let cands=[];
       for(let j=0;j<snap.NV;j++){
         if(!snap.basis.includes(j)&&snap.obj[j].gt(q(1e-9)))
-          cands.push(`<strong>${snap.vn[j]}</strong> (${snap.obj[j].plain(sfrac)})`);
+          cands.push(`<strong>${snap.vn[j]}</strong> (c<sub>j</sub>=${_cjDisp(j).plain()})`);
       }
-      enterReason=`Các c<sub>j</sub>−z<sub>j</sub> > 0: ${cands.join(', ')}<br>
-        → Chọn <strong>${snap.vn[ec]}</strong> vì có giá trị lớn nhất = <strong>${snap.obj[ec].plain(sfrac)}</strong>`;
-    } else {
-      enterReason=`Hàng <strong>${snap.vn[snap.basis[lr]]}</strong> có b = <strong>${snap.rhs[lr].str()}</strong> &lt; 0 → chọn ra khỏi cơ sở.<br>
-        Tỉ số đối ngẫu min(c<sub>j</sub>−z<sub>j</sub>) / |a<sub>ij</sub>| → chọn vào: <strong>${snap.vn[ec]}</strong>`;
+      enterReason=`c<sub>j</sub> > 0: ${cands.join(', ')}<br>→ Chọn <strong>${snap.vn[ec]}</strong> vì c<sub>j</sub> = <strong>${_cjDisp(ec).plain()}</strong> lớn nhất.`;
+    }else{
+      enterReason=`Hàng <strong>${snap.vn[snap.basis[lr]]}</strong> có b = <strong>${snap.rhs[lr].str()}</strong> &lt; 0 → biến ra.<br>
+        Tỉ số c<sub>j</sub>/|a<sub>ij</sub>| nhỏ nhất → biến vào: <strong>${snap.vn[ec]}</strong>.`;
     }
-
-    // Ratio test rows
     let ratioHtml='';
     if(type==='primal'){
       const rows=[];
       for(let i=0;i<snap.m;i++){
         const a=snap.tab[i][ec];
-        if(a.gt(q(1e-12))){
-          const r=snap.rhs[i].div(a);
-          rows.push({i,bv:snap.vn[snap.basis[i]],b:snap.rhs[i].str(),a:a.str(),r:r.str(),isMin:i===lr});
-        }
+        if(a.gt(q(1e-12))){const r=snap.rhs[i].div(a);rows.push({i,bv:snap.vn[snap.basis[i]],b:snap.rhs[i].plain(),a:a.plain(),r:r.plain(),isMin:i===lr});}
       }
       if(rows.length){
-        ratioHtml=`<div class="ratio-wrap">
-          <div class="ratio-lbl">Kiểm tra tỉ số θ = b / a<sub>i,col</sub> — chọn hàng có θ nhỏ nhất (biến ra):</div>
-          <table class="rtbl"><thead><tr>
-            <th>Hàng i</th><th>Cơ sở x<sub>B</sub></th><th>b<sub>i</sub></th>
-            <th>a<sub>i,${ec+1}</sub></th><th>θ = b/a</th><th>Chọn?</th>
-          </tr></thead><tbody>${rows.map(r=>`
-            <tr class="${r.isMin?'r-min':''}">
-              <td>${r.i+1}</td><td>${r.bv}</td><td>${r.b}</td>
-              <td>${r.a}</td><td><strong>${r.r}</strong></td>
-              <td>${r.isMin?'<span class="r-pick">← Min θ (ra)</span>':''}</td>
-            </tr>`).join('')}
-          </tbody></table>
-        </div>`;
+        ratioHtml=`<div class="ratio-wrap"><div class="ratio-lbl">Kiểm tra tỉ số &#952; = b / a<sub>i,col</sub>:</div>
+        <table class="rtbl"><thead><tr><th>Hàng</th><th>Cơ sở</th><th>b</th><th>a<sub>ij</sub></th><th>&#952;</th><th></th></tr></thead><tbody>
+        ${rows.map(r=>`<tr class="${r.isMin?'r-min':''}"><td>${r.i+1}</td><td>${r.bv}</td><td>${r.b}</td><td>${r.a}</td><td><strong>${r.r}</strong></td><td>${r.isMin?'<span class="r-pick">&#8592; Min</span>':''}</td></tr>`).join('')}
+        </tbody></table></div>`;
       }
     }
-
     info=`<div class="info-box ib-${type==='primal'?'primal':'dual'}">${enterReason}</div>
     <div class="pchips">
       <div class="pchip c-enter"><span class="pchip-dot"></span><span class="pchip-lbl">Biến vào</span><span class="pchip-val">${snap.vn[ec]}</span></div>
       <div class="pchip c-leave"><span class="pchip-dot"></span><span class="pchip-lbl">Biến ra</span><span class="pchip-val">${snap.vn[snap.basis[lr]]}</span></div>
       <div class="pchip c-pivot"><span class="pchip-dot"></span><span class="pchip-lbl">Phần tử chốt</span><span class="pchip-val">[hàng ${lr+1}, cột ${ec+1}] = ${pivVal}</span></div>
-    </div>
-    ${ratioHtml}`;
+    </div>${ratioHtml}`;
   }
 
-  const subMap={init:'Trạng thái cơ sở ban đầu với biến bù và biến nhân tạo',optimal:'Tất cả c_j − z_j ≤ 0 · Không thể cải thiện thêm',after:'Kết quả sau phép xoay — chuẩn bị bước tiếp theo'};
-  const sub=subMap[type]||(ec>=0&&lr>=0?`Trước phép xoay: ${snap.vn[ec]} vào, ${snap.vn[snap.basis[lr]]} ra`:'');
+  const subMap={init:'Cơ sở ban đầu với biến bù và biến nhân tạo',optimal:'Tất cả c<sub>j</sub> ≤ 0 · Nghiệm tối ưu đạt được',after:'Kết quả sau phép xoay Gauss'};
+  const sub=subMap[type]||(ec>=0&&lr>=0?`${snap.vn[ec]} vào cơ sở / ${snap.vn[snap.basis[lr]]} ra khỏi cơ sở`:'');
 
   return`<div class="step-card t-${type}"><div class="step-inner">
     <div class="step-head">
@@ -753,112 +1037,107 @@ function renderStep(snap,ec,lr,idx,title,type,sfrac,ot){
     </div>
     <div class="step-body">
       ${info}
-      <div class="tbl-scroll">${buildTable(snap,ec,lr,sfrac,ot)}</div>
+      <div class="tbl-scroll">${buildTable(snap,ec,lr,ot)}</div>
     </div>
   </div></div>`;
 }
 
-/* ═══ BUILD TABLE ═══
-   RULES:
-   1. Pivot cell: WHITE bg + DARK TEAL text + teal border → always readable
-   2. obj row (c_j - z_j):
-      - Basis vars: always 0 (gray)
-      - Non-basis positive: purple (entering candidates)
-      - Non-basis negative/zero: gray italic
-   3. b (RHS): always ≥ 0 in primal-feasible tableau → shown with teal tint
-   4. Z value: current obj value, shown in green
-═══ */
-function buildTable(snap,ec,lr,sfrac,ot){
-  const{tab,rhs,obj,zv,basis,vn,m,NV}=snap;
-
+/* ═══════════════════════════════════════════════════
+   BUILD SIMPLEX TABLE
+   c_j row: shows origC[j] (original c values, positive for MIN)
+   Coloring logic based on internal obj[j] (reduced cost)
+   ═══════════════════════════════════════════════════ */
+function buildTable(snap,ec,lr,ot){
+  const{tab,rhs,obj,origC,zv,basis,vn,m,NV}=snap;
   let h=`<table class="stab"><thead><tr><th>Cơ sở</th>`;
   for(let j=0;j<NV;j++)h+=`<th${j===ec?' class="h-enter"':''}>${vn[j]}</th>`;
   h+=`<th>b (RHS)</th></tr></thead><tbody>`;
-
   for(let i=0;i<m;i++){
     const isLR=i===lr;
     h+=`<tr>`;
-    // Basis cell
     h+=`<td class="${isLR?'c-basis-lv':'c-basis'}">${vn[basis[i]]}</td>`;
-    // Coefficient cells
     for(let j=0;j<NV;j++){
       let cls='';
-      if(isLR&&j===ec) cls='c-pivot';
-      else if(isLR)    cls='c-leave';
-      else if(j===ec)  cls='c-enter';
-      h+=`<td class="${cls}">${tab[i][j].html(sfrac)}</td>`;
+      if(isLR&&j===ec)cls='c-pivot';
+      else if(isLR)cls='c-leave';
+      else if(j===ec)cls='c-enter';
+      h+=`<td class="${cls}">${tab[i][j].html()}</td>`;
     }
-    // RHS cell — should be ≥ 0 in primal feasible
-    h+=`<td class="c-rhs${isLR?' c-leave':''}">${rhs[i].html(sfrac)}</td></tr>`;
+    h+=`<td class="c-rhs${isLR?' c-leave':''}">${rhs[i].html()}</td></tr>`;
   }
-
-  // Objective row: c_j - z_j
-  // IMPORTANT: obj[j] stores the reduced cost in maximization sense
-  // For basis vars: this is 0 by construction after row-reduction
-  // For non-basis: positive = can still improve; negative = penalized
-  // We display abs values with correct sign — positive means "can enter"
-  h+=`<tr class="obj-row"><td>c<sub>j</sub>&minus;z<sub>j</sub></td>`;
+  // Hàng c_j: hiển thị obj[j] đã cập nhật sau mỗi pivot
+  // MAX: obj[j] = c_j - z_j (trực tiếp)
+  // MIN: obj[j] = -(c_j - z_j) nên cần đổi dấu để hiển thị đúng chiều
+  const signFactor = ot==='min' ? -1 : 1;
+  h+=`<tr class="obj-row"><td>c<sub>j</sub></td>`;
   for(let j=0;j<NV;j++){
     const isBasis=basis.includes(j);
+    // Giá trị hiển thị: obj[j] * signFactor
+    const raw=obj[j];
+    const dispVal=ot==='min'?raw.neg():raw;
+    const rv=obj[j].val(); // dùng giá trị nội bộ để quyết định màu sắc
     if(isBasis){
-      // Basis vars always have cj-zj=0
+      // Biến cơ sở: c_j - z_j = 0 (hiển thị 0)
       h+=`<td class="cj-zero">0</td>`;
       continue;
     }
-    const v=obj[j].val();
     let cls='';
-    if(j===ec)       cls='cj-enter';
-    else if(v>1e-9)  cls='cj-pos';
-    else if(v<-1e-9) cls='cj-neg';
+    if(j===ec)     cls='cj-enter';
+    else if(rv>1e-9) cls='cj-pos';
+    else if(rv<-1e-9)cls='cj-neg';
     else             cls='cj-zero';
-    h+=`<td class="${cls}">${obj[j].plain(sfrac)}</td>`;
+    h+=`<td class="${cls}">${dispVal.plain()}</td>`;
   }
-  // Z value: actual objective (negate back if min problem)
-  let zvDisp=zv.clone();
-  if(ot==='min') zvDisp=zvDisp.neg();
-  h+=`<td class="z-val">${zvDisp.plain(sfrac)}</td>`;
+  let zvDisp=zv.clone();if(ot==='min')zvDisp=zvDisp.neg();
+  h+=`<td class="z-val">${zvDisp.plain()}</td>`;
   h+=`</tr></tbody></table>`;
   return h;
 }
 
-/* ═══ PROBLEM HEADER ═══ */
+/* ═══════════════════════════════════════════════════
+   PROBLEM HEADER
+   ═══════════════════════════════════════════════════ */
 function buildProbHeader(inp,sf){
   const{n,m,ot,c,A,b,types}=inp;
   const lbl=ot==='max'?'Max Z =':'Min Z =';
-  const objStr=c.map((ci,j)=>{const s=j>0?(ci>=0?' + ':' − '):'';const v=j>0?Math.abs(ci):ci;return`${s}${v}x<sub>${j+1}</sub>`}).join('');
+  const objStr=c.map((ci,j)=>{const s=j>0?(ci>=0?' + ':' &#8722; '):'';const v=j>0?Math.abs(ci):ci;return`${s}${v}x<sub>${j+1}</sub>`}).join('');
   const conRows=A.map((row,i)=>{
-    const lhs=row.map((a,j)=>{const s=j>0?(a>=0?' + ':' − '):'';const v=j>0?Math.abs(a):a;return`${s}${v}x<sub>${j+1}</sub>`}).join('');
+    const lhs=row.map((a,j)=>{const s=j>0?(a>=0?' + ':' &#8722; '):'';const v=j>0?Math.abs(a):a;return`${s}${v}x<sub>${j+1}</sub>`}).join('');
     return`<div class="prob-con-row"><span class="prob-con-idx">${i+1}.</span><span class="prob-con-expr">${lhs}</span><span class="prob-con-sign">${types[i]}</span><span class="prob-con-rhs">${b[i]}</span></div>`;
   }).join('');
-  const nn=Array.from({length:n},(_,i)=>`x<sub>${i+1}</sub>`).join(', ')+' ≥ 0';
+  const nn=Array.from({length:n},(_,i)=>`x<sub>${i+1}</sub>`).join(', ')+' &#8805; 0';
   const sfVars=sf.vn.slice(n).join(', ');
   return`<div class="prob-card">
     <div class="prob-eyebrow">Bài toán đầu vào</div>
     <div class="prob-obj"><span class="prob-obj-lbl">${lbl}</span><span class="prob-obj-expr">${objStr}</span></div>
     <div class="prob-con-lbl">Ràng buộc:</div>${conRows}
     <div class="prob-nn">${nn}</div>
-    <div class="prob-sf">Biến bổ sung khi chuyển về dạng chuẩn: <strong style="color:var(--teal)">${sfVars||'(không có)'}</strong></div>
+    <div class="prob-sf">Biến bổ sung: <strong style="color:var(--teal)">${sfVars||'(không có)'}</strong></div>
   </div>`;
 }
 
-/* ═══ RESULT PANEL ═══ */
-function buildResultPanel(T,origN,ot,sfrac,isInt){
+/* ═══════════════════════════════════════════════════
+   RESULT PANEL
+   ═══════════════════════════════════════════════════ */
+function buildResultPanel(T,origN,ot,isInt){
   const sol={};
   for(let i=0;i<T.m;i++)sol[T.vn[T.basis[i]]]=T.rhs[i].clone();
   for(let j=0;j<T.NV;j++)if(!(T.vn[j] in sol))sol[T.vn[j]]=ZERO.clone();
   let zv=T.zv.clone();if(ot==='min')zv=zv.neg();
   const zlbl=ot==='max'?'Z<sub>max</sub>':'Z<sub>min</sub>';
-  let cards=`<div class="rc z-rc"><div class="rc-lbl">${zlbl}</div><div class="rc-val">${zv.plain(sfrac)}</div></div>`;
-  for(let j=0;j<origN;j++){const v=sol['x'+(j+1)]||ZERO;cards+=`<div class="rc"><div class="rc-lbl">x<sub>${j+1}</sub></div><div class="rc-val">${v.plain(sfrac)}</div></div>`}
+  let cards=`<div class="rc z-rc"><div class="rc-lbl">${zlbl}</div><div class="rc-val">${zv.plain()}</div></div>`;
+  for(let j=0;j<origN;j++){const v=sol['x'+(j+1)]||ZERO;cards+=`<div class="rc"><div class="rc-lbl">x<sub>${j+1}</sub></div><div class="rc-val">${v.plain()}</div></div>`}
   return`<div class="result-panel${isInt?' is-int':''}">
-    <div class="result-head"><div class="result-icon">${isInt?'⬡':'◆'}</div><div class="result-title">${isInt?'Nghiệm Nguyên Tối Ưu':'Nghiệm Tối Ưu'}</div></div>
+    <div class="result-head"><div class="result-icon">${isInt?'&#11042;':'&#9670;'}</div><div class="result-title">${isInt?'Nghiệm Nguyên Tối Ưu':'Nghiệm Tối Ưu'}</div></div>
     <div class="result-cards">${cards}</div>
   </div>`;
 }
 
-function mkAlert(t,msg){return`<div class="alert-box ${t==='warn'?'a-warn':'a-ok'}"><span class="aico">${t==='warn'?'⚠':'✓'}</span><span>${msg}</span></div>`}
+function mkAlert(t,msg){return`<div class="alert-box ${t==='warn'?'a-warn':'a-ok'}"><span class="aico">${t==='warn'?'&#9888;':'&#10003;'}</span><span>${msg}</span></div>`}
 
-/* ═══ EXAMPLES ═══ */
+/* ═══════════════════════════════════════════════════
+   EXAMPLES
+   ═══════════════════════════════════════════════════ */
 function ex(n){
   clrAll();
   if(n===1){
@@ -890,6 +1169,7 @@ function clrAll(){
   document.getElementById('condiv').querySelectorAll('input').forEach(i=>i.value='');
   document.getElementById('sol').innerHTML='';
   document.getElementById('placeholder').style.display='flex';
+  manualState=null;
   setStatus('','Sẵn sàng');
 }
 
@@ -911,8 +1191,4 @@ buildForm();
 ">
   <div>
     <div>Mọi quyền được bảo lưu © MathLPSol</div>
-    <div> <a href="mailto:" style="color:var(--teal);text-decoration:none;font-family:var(--mono);font-size:12.5px">TP.MINH TIẾN - MathLPSol.com</a></div>
-  </div>
-</footer>
-</body>
-</html>
+    <div> <a href="/cdn-cgi/l/email-protection#fe969b929291be939f8a969a98d09d9193" style="color:var(--teal);text-decoration:none;font-family:var(--mono);font-size:12.5px">TP.MINH TIẾN - MathLPSol.com</a></div
