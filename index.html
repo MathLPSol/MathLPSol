@@ -660,7 +660,7 @@ function findDual(T){
 /* ═══════════════════════════════════════════════════
    MANUAL STEP STATE
    ═══════════════════════════════════════════════════ */
-let manualState=null; // {T, inp, step, mode:'primal'|'dual'|'gomory', origN}
+let manualState=null; // {T, inp, step, origN, phase:'lp'|'gomory', gomIter}
 
 /* ═══════════════════════════════════════════════════
    MAIN SOLVER  (auto mode)
@@ -687,7 +687,7 @@ function solveManual(){
   manualState=null;
   const sf=buildSF(inp);
   const T=makeTab(sf);
-  manualState={T,inp,step:0,origN:inp.n};
+  manualState={T,inp,step:0,origN:inp.n,phase:'lp',gomIter:0};
   let html=buildProbHeader(inp,sf);
   html+=renderStep(cloneT(T),-1,-1,0,'Bảng đơn hình khởi đầu','init',inp.ot);
   html+=buildManualControls(T,inp.ot,0);
@@ -837,8 +837,19 @@ function manualAutoAll(){
     html+=renderStep(cloneT(T),-1,-1,manualState.step++,`Sau phép xoay — Bước ${manualState.step-1}`,'after',inp.ot);
   }
   if(status==='optimal'){
-    html+=renderStep(cloneT(T),-1,-1,manualState.step,'Bảng tối ưu cuối cùng','optimal',inp.ot);
+    html+=renderStep(cloneT(T),-1,-1,manualState.step,'Bảng đơn hình tối ưu cuối cùng','optimal',inp.ot);
     html+=buildResultPanel(T,inp.n,inp.ot,false);
+    if(inp.sint){
+      html+=`<div class="gom-div"><div class="gom-div-line"></div>
+        <div class="gom-div-pill">&#10022; Cắt Gomory — Nghiệm Nguyên</div>
+        <div class="gom-div-line"></div></div>`;
+      html+=buildGomoryControls(T,inp.n,0);
+      solDiv.insertAdjacentHTML('beforeend',html);
+      manualState.phase='gomory';
+      manualState.gomIter=0;
+      setStatus('run','Gomory thủ công — chọn hàng cắt');
+      return;
+    }
   }else if(status==='unbounded'){html+=mkAlert('warn','Bài toán không bị chặn.')}
   else if(status==='infeasible'){html+=mkAlert('warn','Bài toán vô nghiệm.')}
   solDiv.insertAdjacentHTML('beforeend',html);
@@ -869,11 +880,23 @@ function _applyManualPivot(ec,lr,mode){
   if(isOpt){
     const stuck=T.basis.some((bv,i)=>T.artSet.has(bv)&&Math.abs(T.rhs[i].val())>1e-8);
     if(!stuck){
-      html+=renderStep(cloneT(T),-1,-1,manualState.step+1,'Bảng tối ưu cuối cùng','optimal',inp.ot);
+      html+=renderStep(cloneT(T),-1,-1,manualState.step+1,'Bảng đơn hình tối ưu cuối cùng','optimal',inp.ot);
       html+=buildResultPanel(T,inp.n,inp.ot,false);
-      solDiv.insertAdjacentHTML('beforeend',html);
-      manualState=null;
-      setStatus('ok','Hoàn tất ✓');
+      if(inp.sint){
+        // LP xong → chuyển sang Gomory thủ công
+        html+=`<div class="gom-div"><div class="gom-div-line"></div>
+          <div class="gom-div-pill">&#10022; Cắt Gomory — Nghiệm Nguyên</div>
+          <div class="gom-div-line"></div></div>`;
+        html+=buildGomoryControls(T,inp.n,0);
+        solDiv.insertAdjacentHTML('beforeend',html);
+        manualState.phase='gomory';
+        manualState.gomIter=0;
+        setStatus('run','Gomory thủ công — chọn hàng cắt');
+      } else {
+        solDiv.insertAdjacentHTML('beforeend',html);
+        manualState=null;
+        setStatus('ok','Hoàn tất ✓');
+      }
       return;
     }
   }
@@ -888,14 +911,396 @@ function manualFinish(){
   const T=manualState.T;
   const inp=manualState.inp;
   const mc=document.getElementById('mc');if(mc)mc.remove();
-  let html=renderStep(cloneT(T),-1,-1,manualState.step+1,'Bảng tối ưu cuối cùng','optimal',inp.ot);
-  html+=buildResultPanel(T,inp.n,inp.ot,false);
+  const sol=document.getElementById('sol');
+
+  if(manualState.phase==='lp'){
+    // Xong LP → hiện kết quả LP + hỏi có muốn chạy Gomory không
+    let html=renderStep(cloneT(T),-1,-1,manualState.step+1,'Bảng đơn hình tối ưu cuối cùng','optimal',inp.ot);
+    html+=buildResultPanel(T,inp.n,inp.ot,false);
+    // Hỏi Gomory
+    if(inp.sint){
+      html+=`<div class="gom-div"><div class="gom-div-line"></div>
+        <div class="gom-div-pill">&#10022; Cắt Gomory — Nghiệm Nguyên</div>
+        <div class="gom-div-line"></div></div>`;
+      html+=buildGomoryControls(T,inp.n,0);
+      sol.insertAdjacentHTML('beforeend',html);
+      manualState.phase='gomory';
+      manualState.gomIter=0;
+      setStatus('run','Gomory thủ công — chọn hàng cắt');
+    } else {
+      sol.insertAdjacentHTML('beforeend',html);
+      manualState=null;
+      setStatus('ok','Hoàn tất ✓');
+    }
+  } else {
+    // Xong Gomory
+    const EPS=q(1,1000000);
+    let allInt=true;
+    for(let i=0;i<T.m;i++){
+      if(T.basis[i]<manualState.origN){
+        const fp=T.rhs[i].fracPart();
+        if(fp.gt(EPS)&&fp.lt(new Q(999999,1000000))){allInt=false;break}
+      }
+    }
+    if(allInt){
+      let html=renderStep(cloneT(T),-1,-1,manualState.step+1,'Tất cả biến gốc là nguyên — Nghiệm nguyên tối ưu','optimal',inp.ot);
+      html+=buildResultPanel(T,manualState.origN,inp.ot,true);
+      html+=mkAlert('ok',`Tìm được nghiệm nguyên tối ưu sau ${manualState.gomIter} lần cắt Gomory.`);
+      sol.insertAdjacentHTML('beforeend',html);
+      manualState=null;
+      setStatus('ok','Hoàn tất ✓');
+    } else {
+      // Chưa nguyên, tiếp tục
+      let html=buildGomoryControls(T,manualState.origN,manualState.gomIter);
+      sol.insertAdjacentHTML('beforeend',html);
+      setStatus('run','Gomory thủ công — chọn hàng cắt');
+    }
+  }
+}
+
+function setStatus(t,txt){document.getElementById('sdot').className='sdot'+(t?' '+t:'');document.getElementById('stxt').textContent=txt}
+
+/* ═══════════════════════════════════════════════════
+   MANUAL GOMORY
+   ═══════════════════════════════════════════════════ */
+
+/* Tạo bảng chọn hàng cắt Gomory */
+function buildGomoryControls(T,origN,iterNum){
+  const EPS=q(1,1000000);
+  // Tìm các hàng biến gốc có phần lẻ
+  let rowOpts='<option value="">-- Chọn hàng để cắt --</option>';
+  let hasFrac=false;
+  for(let i=0;i<T.m;i++){
+    if(T.basis[i]<origN){
+      const fp=T.rhs[i].fracPart();
+      if(fp.gt(EPS)&&fp.lt(new Q(999999,1000000))){
+        hasFrac=true;
+        rowOpts+=`<option value="${i}">${T.vn[T.basis[i]]} = ${T.rhs[i].plain()} &nbsp;(phần lẻ f₀ = ${fp.plain()})</option>`;
+      }
+    }
+  }
+  if(!hasFrac){
+    // Tất cả đã nguyên — tự kết thúc
+    setTimeout(()=>manualFinish(),50);
+    return'';
+  }
+  return`<div class="manual-ctrl" id="mc" style="border-color:#7c3aed;background:linear-gradient(135deg,#fdf8ff,white)">
+    <div class="mc-title" style="color:#7c3aed">Gomory Cắt #${iterNum+1} — Chọn hàng</div>
+    <div class="mc-hint" style="background:#f5e8ff;border-color:#7c3aed">
+      Chọn hàng biến cơ sở có giá trị <strong>không nguyên</strong> để tạo điều kiện cắt Gomory.
+      Thông thường chọn hàng có phần lẻ <strong>lớn nhất</strong>.
+    </div>
+    <div class="mc-row">
+      <div class="mc-field">
+        <label>Hàng biến cơ sở (biến có phần lẻ)</label>
+        <select id="mc-gom-row" onchange="previewGomoryCut(${origN})">${rowOpts}</select>
+      </div>
+      <button class="mc-btn" style="background:#7c3aed" onclick="applyGomoryCut(${origN},${iterNum+1})">Tạo điều kiện cắt →</button>
+    </div>
+    <div id="gom-preview"></div>
+    <div class="mc-auto-row">
+      <button class="mc-btn mc-auto" onclick="gomoryAutoStep(${origN},${iterNum+1})">Tự động bước này</button>
+      <button class="mc-btn mc-fin" onclick="gomoryAutoAll(${origN},${iterNum+1})">Tự động tất cả Gomory</button>
+    </div>
+  </div>`;
+}
+
+/* Preview điều kiện cắt khi chọn hàng */
+function previewGomoryCut(origN){
+  const sel=document.getElementById('mc-gom-row');
+  if(!sel||!manualState)return;
+  const fr=parseInt(sel.value);
+  if(isNaN(fr))return;
+  const T=manualState.T;
+  const EPS=q(1,1000000);
+  const f0=T.rhs[fr].fracPart();
+  // Build cut description
+  let terms=[];
+  for(let j=0;j<T.NV;j++){
+    if(!T.basis.includes(j)){
+      const fp=T.tab[fr][j].fracPart().neg(); // -frac(a_ij)
+      if(fp.neg().gt(EPS)) terms.push(`${fp.neg().plain()}·${T.vn[j]}`);
+    }
+  }
+  const prev=document.getElementById('gom-preview');
+  if(prev) prev.innerHTML=`<div class="info-box" style="background:#f5e8ff;border-color:#7c3aed;margin-top:10px;font-size:13px">
+    <strong>${T.vn[T.basis[fr]]}</strong> = ${T.rhs[fr].plain()} → phần lẻ <strong>f₀ = ${f0.plain()}</strong><br>
+    Điều kiện cắt: <code>${terms.join(' + ')||'0'}</code> ≥ <strong>${f0.plain()}</strong>
+  </div>`;
+}
+
+/* Áp dụng cắt Gomory thủ công */
+function applyGomoryCut(origN, iterNum){
+  if(!manualState)return;
+  const sel=document.getElementById('mc-gom-row');
+  const fr=parseInt(sel?.value);
+  if(isNaN(fr)){alert('Vui lòng chọn hàng để cắt!');return}
+  _doGomoryCut(fr,origN,iterNum);
+}
+
+/* Logic cắt + hiển thị + chuyển sang đối ngẫu thủ công */
+function _doGomoryCut(fr,origN,iterNum){
+  if(!manualState)return;
+  const T=manualState.T;
+  const inp=manualState.inp;
+  const EPS=q(1,1000000);
+  const bvName=T.vn[T.basis[fr]];
+  const f0=T.rhs[fr].fracPart();
+  manualState.gomIter=iterNum;
+
+  // Build cut row
+  const nvi=T.NV, nvn=`g${iterNum}`;
+  T.vn.push(nvn); T.NV++;
+  T.tab.forEach(r=>r.push(ZERO.clone()));
+  T.obj.push(ZERO.clone()); T.origC.push(ZERO.clone());
+  const cr=Array.from({length:T.NV},()=>ZERO.clone());
+  for(let j=0;j<T.NV-1;j++) cr[j]=T.tab[fr][j].fracPart().neg();
+  cr[nvi]=ONE.clone();
+  T.tab.push(cr); T.rhs.push(f0.neg()); T.basis.push(nvi); T.m++;
+
+  let desc=[];
+  for(let j=0;j<T.NV-1;j++){
+    if(!T.basis.includes(j)){const fp=cr[j].neg();if(fp.gt(EPS))desc.push(`${fp.str()}&#183;${T.vn[j]}`)}
+  }
+
+  const sol=document.getElementById('sol');
+  const mc=document.getElementById('mc'); if(mc) mc.remove();
+
+  let html=`<div class="step-card t-gomory"><div class="step-inner">
+    <div class="step-head">
+      <div class="step-badge">G${iterNum}</div>
+      <div class="step-titles">
+        <div class="step-title">Điều kiện cắt Gomory #${iterNum}</div>
+        <div class="step-sub">Từ hàng <strong>${bvName}</strong> — phần lẻ f₀ = ${f0.str()}</div>
+      </div>
+      <div class="step-pill">Gomory</div>
+    </div>
+    <div class="step-body">
+      <div class="gom-box">
+        Biến cơ sở <strong>${bvName}</strong> có giá trị không nguyên → phần lẻ <strong>f₀ = ${f0.str()}</strong><br>
+        Điều kiện cắt: <code>${desc.join(' + ')||'0'}</code> ≥ <strong>${f0.str()}</strong><br>
+        Thêm biến bù <strong><code>${nvn}</code></strong>, hàng mới RHS = <strong>−${f0.str()}</strong>
+      </div>
+      <div class="tbl-scroll">${buildTable(cloneT(T),-1,T.m-1,inp.ot)}</div>
+    </div>
+  </div></div>`;
+
+  // Sau khi cắt → phải dùng đơn hình đối ngẫu để phục hồi khả thi
+  // Chuyển sang manual dual simplex
+  html+=buildManualDualControls(T,inp.ot,manualState.step,iterNum,origN);
+  sol.insertAdjacentHTML('beforeend',html);
+  sol.lastElementChild?.scrollIntoView({behavior:'smooth',block:'start'});
+  setStatus('run',`Gomory #${iterNum} — Đối ngẫu thủ công`);
+}
+
+/* Bảng chọn pivot cho đối ngẫu sau Gomory */
+function buildManualDualControls(T,ot,step,iterNum,origN){
+  const dualFeas=T.obj.every(v=>v.lte(q(1e-9)));
+  const hasNeg=T.rhs.findIndex(v=>v.lt(q(-1e-9)));
+  if(!dualFeas||hasNeg<0){
+    // Không cần đối ngẫu nữa, tiếp tục Gomory
+    setTimeout(()=>afterDualGomory(origN,iterNum),50);
+    return'';
+  }
+  // Hàng ra: các hàng có b < 0
+  let rowOpts='<option value="">-- Chọn biến ra (b < 0) --</option>';
+  for(let i=0;i<T.m;i++){
+    if(T.rhs[i].lt(q(-1e-9)))
+      rowOpts+=`<option value="${i}">${T.vn[T.basis[i]]} (b = ${T.rhs[i].plain()})</option>`;
+  }
+  // Cột vào: các cột có a_ij < 0 trên hàng ra
+  let colOpts='<option value="">-- Chọn biến vào --</option>';
+  for(let j=0;j<T.NV;j++){
+    if(!T.basis.includes(j)) colOpts+=`<option value="${j}">${T.vn[j]}</option>`;
+  }
+  return`<div class="manual-ctrl" id="mc" style="border-color:var(--orange);background:linear-gradient(135deg,#fff8f5,white)">
+    <div class="mc-title" style="color:var(--orange)">Đơn hình đối ngẫu (sau Gomory #${iterNum})</div>
+    <div class="mc-hint" style="background:var(--orange-lt);border-color:var(--orange)">
+      Sau khi thêm điều kiện cắt, RHS âm → dùng <strong>đơn hình đối ngẫu</strong> để phục hồi tính khả thi.<br>
+      Chọn hàng có <strong>b &lt; 0</strong> làm biến ra, sau đó chọn cột vào theo tỉ số đối ngẫu.
+    </div>
+    <div class="mc-row">
+      <div class="mc-field">
+        <label>Biến ra (hàng có b &lt; 0)</label>
+        <select id="mc-dual-row" onchange="updateDualRatios(${iterNum},${origN})">${rowOpts}</select>
+      </div>
+      <div class="mc-field">
+        <label>Biến vào (cột)</label>
+        <select id="mc-dual-col">${colOpts}</select>
+      </div>
+      <button class="mc-btn" style="background:var(--orange)" onclick="applyDualPivotGomory(${iterNum},${origN})">Xoay đối ngẫu →</button>
+    </div>
+    <div id="dual-ratio-preview"></div>
+    <div class="mc-auto-row">
+      <button class="mc-btn mc-auto" onclick="dualAutoStepGomory(${iterNum},${origN})">Tự động bước này</button>
+    </div>
+  </div>`;
+}
+
+/* Tỉ số đối ngẫu khi chọn hàng ra */
+function updateDualRatios(iterNum, origN){
+  if(!manualState)return;
+  const T=manualState.T;
+  const lr=parseInt(document.getElementById('mc-dual-row')?.value);
+  if(isNaN(lr))return;
+  // Tỉ số đối ngẫu: c_j / |a_ij| với a_ij < 0 → chọn min
+  const rows=[];
+  for(let j=0;j<T.NV;j++){
+    if(!T.basis.includes(j)){
+      const a=T.tab[lr][j];
+      if(a.lt(q(-1e-12))){
+        const r=T.obj[j].div(a); // cả hai <= 0, tỉ số >= 0
+        rows.push({j,vn:T.vn[j],cj:T.obj[j].plain(),aij:a.plain(),r:r.plain()});
+      }
+    }
+  }
+  const prev=document.getElementById('dual-ratio-preview');
+  if(!prev)return;
+  if(!rows.length){prev.innerHTML=`<span style="color:var(--red)">Không có a<sub>ij</sub> &lt; 0 → bài toán vô nghiệm!</span>`;return}
+  // Tìm min ratio
+  let minR=null,minJ=-1;
+  rows.forEach(r=>{if(minR===null||parseFloat(r.r.replace(/[^0-9.\-]/g,''))<parseFloat(minR.replace(/[^0-9.\-]/g,''))){minR=r.r;minJ=r.j}});
+  let h=`<div class="ratio-lbl" style="margin-top:8px">Tỉ số đối ngẫu c<sub>j</sub> / |a<sub>ij</sub>| — chọn min:</div>
+  <table class="rtbl"><thead><tr><th>Biến</th><th>c<sub>j</sub></th><th>a<sub>ij</sub></th><th>Tỉ số</th><th></th></tr></thead><tbody>`;
+  rows.forEach(r=>{
+    const isMin=r.j===minJ;
+    h+=`<tr class="${isMin?'r-min':''}"><td>${r.vn}</td><td>${r.cj}</td><td>${r.aij}</td><td><strong>${r.r}</strong></td><td>${isMin?'<span class="r-pick">← Min</span>':''}</td></tr>`;
+  });
+  h+=`</tbody></table>`;
+  prev.innerHTML=h;
+  // Auto-select
+  const colSel=document.getElementById('mc-dual-col');
+  if(colSel) colSel.value=String(minJ);
+}
+
+/* Áp dụng một bước đối ngẫu sau Gomory */
+function applyDualPivotGomory(iterNum,origN){
+  if(!manualState)return;
+  const lr=parseInt(document.getElementById('mc-dual-row')?.value);
+  const ec=parseInt(document.getElementById('mc-dual-col')?.value);
+  if(isNaN(lr)||isNaN(ec)){alert('Vui lòng chọn cả biến ra và biến vào!');return}
+  _execDualStepGomory(lr,ec,iterNum,origN);
+}
+
+function dualAutoStepGomory(iterNum,origN){
+  if(!manualState)return;
+  const dp=findDual(manualState.T);
+  if(!dp){afterDualGomory(origN,iterNum);return}
+  _execDualStepGomory(dp.lr,dp.ec,iterNum,origN);
+}
+
+function _execDualStepGomory(lr,ec,iterNum,origN){
+  if(!manualState)return;
+  const T=manualState.T;
+  const inp=manualState.inp;
+  const snap=cloneT(T);
+  const sol=document.getElementById('sol');
+  const mc=document.getElementById('mc');if(mc)mc.remove();
+  manualState.step++;
+  doPivot(T,lr,ec);
+  let html=renderStep(snap,ec,lr,manualState.step,`Đối ngẫu (G${iterNum}) — Bước ${manualState.step}`,'dual',inp.ot);
+  manualState.step++;
+  html+=renderStep(cloneT(T),-1,-1,manualState.step,`Sau phép xoay (G${iterNum}) — Bước ${manualState.step}`,'after',inp.ot);
+  // Kiểm tra còn hàng b < 0 không
+  const stillNeg=T.rhs.some(v=>v.lt(q(-1e-9)));
+  if(stillNeg){
+    html+=buildManualDualControls(T,inp.ot,manualState.step,iterNum,origN);
+  } else {
+    // Đối ngẫu xong → tiếp tục Gomory
+    html+=`<div class="info-box" style="background:var(--green-lt);border-color:var(--green);margin-top:4px;font-size:13px">
+      ✓ Bảng đã khả thi trở lại sau Gomory #${iterNum}. Kiểm tra nghiệm nguyên...
+    </div>`;
+    // Check integer
+    const EPS=q(1,1000000);
+    let allInt=true;
+    for(let i=0;i<T.m;i++){
+      if(T.basis[i]<origN){const fp=T.rhs[i].fracPart();if(fp.gt(EPS)&&fp.lt(new Q(999999,1000000))){allInt=false;break}}
+    }
+    if(allInt){
+      html+=renderStep(cloneT(T),-1,-1,manualState.step+1,'Tất cả biến gốc là nguyên — Nghiệm nguyên tối ưu','optimal',inp.ot);
+      html+=buildResultPanel(T,origN,inp.ot,true);
+      html+=mkAlert('ok',`Tìm được nghiệm nguyên tối ưu sau ${iterNum} lần cắt Gomory.`);
+      sol.insertAdjacentHTML('beforeend',html);
+      manualState=null;
+      setStatus('ok','Hoàn tất ✓');
+      return;
+    }
+    html+=buildGomoryControls(T,origN,iterNum);
+    manualState.gomIter=iterNum;
+  }
+  sol.insertAdjacentHTML('beforeend',html);
+  sol.lastElementChild?.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function afterDualGomory(origN,iterNum){
+  if(!manualState)return;
+  const T=manualState.T;
+  const inp=manualState.inp;
+  const EPS=q(1,1000000);
+  const sol=document.getElementById('sol');
+  const mc=document.getElementById('mc');if(mc)mc.remove();
+  let allInt=true;
+  for(let i=0;i<T.m;i++){
+    if(T.basis[i]<origN){const fp=T.rhs[i].fracPart();if(fp.gt(EPS)&&fp.lt(new Q(999999,1000000))){allInt=false;break}}
+  }
+  if(allInt){
+    let html=renderStep(cloneT(T),-1,-1,manualState.step+1,'Tất cả biến gốc là nguyên','optimal',inp.ot);
+    html+=buildResultPanel(T,origN,inp.ot,true);
+    html+=mkAlert('ok',`Tìm được nghiệm nguyên tối ưu sau ${iterNum} lần cắt Gomory.`);
+    sol.insertAdjacentHTML('beforeend',html);
+    manualState=null;
+    setStatus('ok','Hoàn tất ✓');
+  } else {
+    sol.insertAdjacentHTML('beforeend',buildGomoryControls(T,origN,iterNum));
+  }
+}
+
+/* Tự động 1 chu kỳ Gomory (cắt + đối ngẫu) */
+function gomoryAutoStep(origN,iterNum){
+  if(!manualState)return;
+  const T=manualState.T;
+  const EPS=q(1,1000000);
+  // Tìm hàng phần lẻ lớn nhất
+  let fr=-1,mf=EPS.clone();
+  for(let i=0;i<T.m;i++){
+    if(T.basis[i]<origN){const fp=T.rhs[i].fracPart();if(fp.gt(EPS)&&fp.lt(new Q(999999,1000000))&&fp.gt(mf)){mf=fp.clone();fr=i}}
+  }
+  if(fr===-1){manualFinish();return}
+  _doGomoryCut(fr,origN,iterNum);
+  // Tự động đối ngẫu
+  setTimeout(()=>{
+    let di=0;
+    while(di++<50){
+      const dp=findDual(manualState?.T);if(!dp||!manualState)break;
+      const mc=document.getElementById('mc');if(mc)mc.remove();
+      const snap=cloneT(manualState.T);
+      manualState.step++;
+      const inp=manualState.inp;
+      doPivot(manualState.T,dp.lr,dp.ec);
+      let h=renderStep(snap,dp.ec,dp.lr,manualState.step,`Đối ngẫu (G${iterNum}) — Bước ${manualState.step}`,'dual',inp.ot);
+      manualState.step++;
+      h+=renderStep(cloneT(manualState.T),-1,-1,manualState.step,`Sau phép xoay (G${iterNum}) — Bước ${manualState.step}`,'after',inp.ot);
+      document.getElementById('sol').insertAdjacentHTML('beforeend',h);
+    }
+    if(manualState){
+      const mc2=document.getElementById('mc');if(mc2)mc2.remove();
+      document.getElementById('sol').insertAdjacentHTML('beforeend',buildGomoryControls(manualState.T,origN,iterNum));
+    }
+  },100);
+}
+
+/* Tự động toàn bộ phần Gomory còn lại */
+function gomoryAutoAll(origN,iterNum){
+  if(!manualState)return;
+  const T=manualState.T;
+  const inp=manualState.inp;
+  const mc=document.getElementById('mc');if(mc)mc.remove();
+  let html=runGomory(T,inp,inp.ot,origN,manualState.step);
   document.getElementById('sol').insertAdjacentHTML('beforeend',html);
   manualState=null;
   setStatus('ok','Hoàn tất ✓');
 }
 
-function setStatus(t,txt){document.getElementById('sdot').className='sdot'+(t?' '+t:'');document.getElementById('stxt').textContent=txt}
 
 /* ═══════════════════════════════════════════════════
    AUTO SOLVER
