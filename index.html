@@ -293,6 +293,47 @@ td.cj-neg{color:#aaa!important;font-style:italic}
 .mc-btn.mc-fin{background:var(--paper2);color:var(--ink3);border:1.5px solid var(--line);font-size:12px}
 .mc-btn.mc-fin:hover{background:#fef0e8;border-color:var(--orange);color:var(--orange)}
 .ratio-preview{margin-top:8px}
+
+/* ── PROPER MATH FRACTION ── */
+.frac{
+  display:inline-flex;
+  flex-direction:column;
+  align-items:center;
+  vertical-align:middle;
+  margin:0 1px;
+  line-height:1;
+  font-size:.85em;
+}
+.frac-num,.frac-den{
+  display:block;
+  text-align:center;
+  padding:0 3px;
+  line-height:1.3;
+  font-family:var(--mono);
+  font-size:1em;
+}
+.frac-bar{
+  display:block;
+  width:100%;
+  height:1.2px;
+  background:currentColor;
+  margin:1px 0;
+  opacity:.75;
+}
+.frac-sign{
+  display:inline;
+  vertical-align:middle;
+  margin-right:1px;
+  font-size:1.1em;
+  line-height:1;
+}
+/* Larger fractions in result panel */
+.rc-val .frac{font-size:1em}
+.rc-val .frac-num,.rc-val .frac-den{font-size:.85em;padding:0 4px}
+/* Fractions in table cells */
+td .frac{font-size:.82em}
+/* z-val cell fraction */
+.z-val .frac{font-size:.9em}
 </style>
 </head>
 <body>
@@ -399,8 +440,12 @@ class Q{
   _fmt(){
     const v=this.val();
     if(this.isInteger())return String(this.floorInt());
-    const s=this.p<0?'&#8722;':'';const a=Math.abs(this.p);
-    return`<sup>${s}${a}</sup>&frasl;<sub>${this.q}</sub>`
+    // Phân số đứng chuẩn toán học: tử số / mẫu số với đường kẻ ngang
+    const neg=this.p<0;
+    const num=Math.abs(this.p);
+    const den=this.q;
+    const sign=neg?'<span class="frac-sign">&#8722;</span>':'';
+    return`${sign}<span class="frac"><span class="frac-num">${num}</span><span class="frac-bar"></span><span class="frac-den">${den}</span></span>`;
   }
 }
 const ZERO=new Q(0),ONE=new Q(1);
